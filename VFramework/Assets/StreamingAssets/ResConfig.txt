@@ -1,2 +1,1 @@
-Cube=Cube
-Sphere=Test/Sphere
+BaseMeleeSkill=Skill/BaseMeleeSkill

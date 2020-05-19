@@ -4,63 +4,68 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class ResourcesMgr
+namespace VFramework.Common
 {
-    private static Dictionary<string, string> m_resConfigDic;
-
-    static ResourcesMgr()
+    public class ResourcesMgr
     {
-        //加载文件
-        string fileContent = GetConfigFile();
-        //解析文件
-        BuildMap(fileContent);
-    }
+        private static Dictionary<string, string> m_resConfigDic;
 
-    /// <summary>
-    /// 加载文件
-    /// </summary>
-    /// <returns></returns>
-    private static string GetConfigFile()
-    {
-        string url;
+        static ResourcesMgr()
+        {
+            //加载文件
+            string fileContent = GetConfigFile();
+            //解析文件
+            BuildMap(fileContent);
+        }
+
+        /// <summary>
+        /// 加载文件
+        /// </summary>
+        /// <returns></returns>
+        private static string GetConfigFile()
+        {
+            string url;
 #if UNITY_EDITOR || UNITY_STANDALONE
-        url = "file://" + Application.dataPath + "/StreamingAssets/ResConfig.txt";
+            url = "file://" + Application.dataPath + "/StreamingAssets/ResConfig.txt";
 #elif UNITY_ANDROID
         url = "jar:file://" + Application.dataPath + "!/assets/ResConfig.txt";
 #elif UNITY_IPHONE
         url = "file://" + Application.dataPath + "/Raw/ResConfig.txt";
 #endif
-        UnityWebRequest webRequest = UnityWebRequest.Get(url);
-        webRequest.SendWebRequest();
-        while (true)
-        {
-            if (webRequest.isDone)
+            UnityWebRequest webRequest = UnityWebRequest.Get(url);
+            webRequest.SendWebRequest();
+            while (true)
             {
-                return webRequest.downloadHandler.text; 
+                if (webRequest.isDone)
+                {
+                    return webRequest.downloadHandler.text;
+                }
             }
         }
-    }
 
-    private static void BuildMap(string fileContent)
-    {
-        m_resConfigDic = new Dictionary<string, string>();
-
-        //当程序退出using代码块，将自动调用reader.Dispose方法
-        using (StringReader reader = new StringReader(fileContent))
+        private static void BuildMap(string fileContent)
         {
-            string line;
-            while((line = reader.ReadLine())!=null)
+            m_resConfigDic = new Dictionary<string, string>();
+
+            //当程序退出using代码块，将自动调用reader.Dispose方法
+            using (StringReader reader = new StringReader(fileContent))
             {
-                string[] keyValue = line.Split('=');
-                m_resConfigDic.Add(keyValue[0], keyValue[1]);
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] keyValue = line.Split('=');
+                    m_resConfigDic.Add(keyValue[0], keyValue[1]);
+                }
             }
         }
-    }
 
-    public static T Load<T>(string fileName) where T : Object
-    {
-        string prefabPath = m_resConfigDic[fileName];
-        return Resources.Load<T>(prefabPath);
-    }
+        public static T Load<T>(string fileName) where T : Object
+        {
+            string prefabPath = m_resConfigDic[fileName];
+            return Resources.Load<T>(prefabPath);
+        }
 
+    }
 }
+
+
