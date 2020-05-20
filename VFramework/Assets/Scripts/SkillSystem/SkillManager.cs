@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using VFramework.Character;
 using VFramework.Common;
-using VFramework.Tools;
 
 namespace VFramework.Skill
 {
@@ -61,10 +60,15 @@ namespace VFramework.Skill
         public void GenerateSkill(SkillData data)
         {
             //创建技能预制件
-            GameObject go = Instantiate(data.skillPrefab, transform.position, Quaternion.identity);
+            //GameObject go = Instantiate(data.skillPrefab, transform.position, Quaternion.identity);
+            GameObject go = GameObjectPool.Instance.CreateObject(data.prefabName, transform.position, Quaternion.identity);
+
+            //传递技能数据
+            go.GetComponent<SkillDeployer>().SkillData = data;
 
             //销毁预制件
-            Destroy(go,data.durationTime);
+            //Destroy(go,data.durationTime);
+            GameObjectPool.Instance.CollectObject(go);
 
             //技能冷却
             StartCoroutine(CoolTimeDown(data));

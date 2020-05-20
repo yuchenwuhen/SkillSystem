@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace VFramework.Tools
+namespace VFramework.Common
 {
     /// <summary>
     /// 脚本单例类

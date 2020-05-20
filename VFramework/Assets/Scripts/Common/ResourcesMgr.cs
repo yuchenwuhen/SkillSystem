@@ -54,6 +54,11 @@ namespace VFramework.Common
                 while ((line = reader.ReadLine()) != null)
                 {
                     string[] keyValue = line.Split('=');
+                    if (m_resConfigDic.ContainsKey(keyValue[0]))
+                    {
+                        Debug.LogWarning("has same prefab name:" + keyValue[0]);
+                        continue;
+                    }
                     m_resConfigDic.Add(keyValue[0], keyValue[1]);
                 }
             }

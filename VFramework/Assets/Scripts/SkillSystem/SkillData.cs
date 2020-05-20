@@ -18,7 +18,7 @@ namespace VFramework.Skill
 
     public enum SelectorType
     {
-        Circle,
+        Sector,
         Rectangle
     }
 

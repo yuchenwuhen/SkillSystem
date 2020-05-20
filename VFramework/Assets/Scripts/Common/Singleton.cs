@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace VFramework.Tools
+namespace VFramework.Common
 {
     public class Singleton<T> where T : class, new()
     {
