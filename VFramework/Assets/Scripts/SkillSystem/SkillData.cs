@@ -50,11 +50,15 @@ namespace VFramework.Skill
         /// <summary>
         /// 消耗体力值
         /// </summary>
-        public int costStrength;
+        public int costSP;
         /// <summary>
         /// 攻击距离
         /// </summary>
         public float attackDistance;
+        /// <summary>
+        /// 攻击角度
+        /// </summary>
+        public float attackAngle;
         /// <summary>
         /// 攻击目标tags
         /// </summary>

@@ -16,6 +16,19 @@ namespace VFramework.Skill
             return CreateObject<IAttackSelector>(className);
         }
 
+        public static IImpactEffect[] CreateImpactEffects(SkillData data)
+        {
+            IImpactEffect[] impacts = new IImpactEffect[data.skillImpactTypes.Length];
+
+            for (int i = 0; i < impacts.Length; i++)
+            {
+                string className = string.Format("VFramework.Skill.{0}Impact", data.skillImpactTypes[i]);
+                impacts[i] = CreateObject<IImpactEffect>(className);
+            }
+
+            return impacts;
+        }
+
         public static T CreateObject<T>(string className) where T : class
         {
             //获取类型

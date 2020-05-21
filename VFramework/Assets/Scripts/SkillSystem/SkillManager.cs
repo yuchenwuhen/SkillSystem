@@ -46,7 +46,7 @@ namespace VFramework.Skill
             SkillData data = skillDatas.Find<SkillData>(t => t.skillID == id);
             
             //判断条件
-            if (data != null && data.coolRemain <= 0 && data.costStrength <= m_characterStatus.strength)
+            if (data != null && data.coolRemain <= 0 && data.costSP <= m_characterStatus.sp)
             {
                 return data;
             }
@@ -64,7 +64,9 @@ namespace VFramework.Skill
             GameObject go = GameObjectPool.Instance.CreateObject(data.prefabName, transform.position, Quaternion.identity);
 
             //传递技能数据
-            go.GetComponent<SkillDeployer>().SkillData = data;
+            var skillDeploy = go.GetComponent<SkillDeployer>();
+            skillDeploy.SkillData = data;
+            skillDeploy.DeploySkill();
 
             //销毁预制件
             //Destroy(go,data.durationTime);

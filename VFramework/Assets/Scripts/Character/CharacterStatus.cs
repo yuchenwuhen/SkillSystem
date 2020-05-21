@@ -6,7 +6,8 @@ namespace VFramework.Character
 {
     public class CharacterStatus : MonoBehaviour
     {
-        public int strength;
+        public int hp;
+        public int sp;
     }
 }
 

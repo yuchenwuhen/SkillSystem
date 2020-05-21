@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace VFramework.Skill
 {
-    public class SkillDeployer : MonoBehaviour
+    public abstract class SkillDeployer : MonoBehaviour
     {
         private SkillData m_skillData;
         public SkillData SkillData
@@ -19,21 +19,36 @@ namespace VFramework.Skill
             }
         }
 
+        private IAttackSelector selector;
+        private IImpactEffect[] impactEffects;
+
         //初始化释放器
         private void InitDeployer()
         {
             //创建算法对象 skillData.VectorType
+            selector = DeployerConfigFactory.CreateAttackSelector(m_skillData);
 
             //创建影响效果
-            for (int i = 0; i < m_skillData.skillImpactTypes.Length; i++)
-            {
-
-            }
+            impactEffects = DeployerConfigFactory.CreateImpactEffects(m_skillData);
         }
 
         //执行算法对象
+        //选区
+        public void CalculateTargets()
+        {
+            m_skillData.attackTargets = selector.SelectTarget(m_skillData, transform);
+        }
+
+        public void ImpactTargets()
+        {
+            for (int i = 0; i < impactEffects.Length; i++)
+            {
+                impactEffects[i].Execute(this);
+            }
+        }
 
         //释放方式
+        public abstract void DeploySkill();
     }
 }
 
