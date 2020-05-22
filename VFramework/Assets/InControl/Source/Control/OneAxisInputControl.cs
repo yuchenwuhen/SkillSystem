@@ -33,8 +33,11 @@ namespace InControl
 		InputControlState nextState;
 		InputControlState thisState;
 
+        public event Action IsPressedHandler;
+        public event Action WasPressedHandler;
+        public event Action WasReleasedHandler;
 
-		void PrepareForUpdate( ulong updateTick )
+        void PrepareForUpdate( ulong updateTick )
 		{
 			if (IsNull)
 			{
@@ -97,7 +100,7 @@ namespace InControl
 
 				nextState.Set( value, stateThreshold );
 
-				return true;
+                return true;
 			}
 
 			return false;
@@ -206,6 +209,9 @@ namespace InControl
 			{
 				UpdateTick = pendingTick;
 			}
+
+            //…Ë÷√ªÿµ˜
+            SetCallback();
 		}
 
 
@@ -295,12 +301,33 @@ namespace InControl
 			}
 		}
 
+        private void SetCallback()
+        {
+            bool isPress = Enabled && thisState.State;
+            if (isPress && IsPressedHandler != null)
+            {
+                IsPressedHandler();
+            }
+
+            bool wasPressed = Enabled && thisState && !lastState;
+            if (wasPressed && WasPressedHandler != null)
+            {
+                WasPressedHandler();
+            }
+
+            bool wasReleased = Enabled && !thisState && lastState;
+            if (wasReleased && WasReleasedHandler != null)
+            {
+                WasReleasedHandler();
+            }
+        }
+
 
 		public bool IsPressed
 		{
 			get
 			{
-				return Enabled && thisState.State;
+                return Enabled && thisState.State;
 			}
 		}
 
@@ -309,7 +336,7 @@ namespace InControl
 		{
 			get
 			{
-				return Enabled && thisState && !lastState;
+                return Enabled && thisState && !lastState;
 			}
 		}
 
@@ -318,7 +345,7 @@ namespace InControl
 		{
 			get
 			{
-				return Enabled && !thisState && lastState;
+                return Enabled && !thisState && lastState;
 			}
 		}
 

@@ -25,6 +25,7 @@ namespace VFramework.Skill
     /// <summary>
     /// 技能数据类
     /// </summary>
+    [System.Serializable]
     public class SkillData
     {
         /// <summary>
@@ -103,9 +104,17 @@ namespace VFramework.Skill
         [HideInInspector]
         public GameObject owner;
         /// <summary>
+        /// 动画前摇
+        /// </summary>
+        public string animationNamePre;
+        /// <summary>
         /// 动画名称
         /// </summary>
         public string animationName;
+        /// <summary>
+        /// 动画后摇
+        /// </summary>
+        public string animationNameEnd;
         /// <summary>
         /// 受击特效名称
         /// </summary>

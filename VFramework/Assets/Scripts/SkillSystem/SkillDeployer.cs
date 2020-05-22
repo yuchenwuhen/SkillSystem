@@ -16,6 +16,7 @@ namespace VFramework.Skill
             set
             {
                 m_skillData = value;
+                InitDeployer();
             }
         }
 

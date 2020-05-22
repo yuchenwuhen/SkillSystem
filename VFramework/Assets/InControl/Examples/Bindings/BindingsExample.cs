@@ -15,13 +15,18 @@ namespace BindingsExample
 		{
 			// See PlayerActions.cs for this setup.
 			playerActions = PlayerActions.CreateWithDefaultBindings();
-			//playerActions.Move.OnLastInputTypeChanged += ( lastInputType ) => Debug.Log( lastInputType );
+            //playerActions.Jump.WasReleasedAction += OnJump;
+            playerActions.Move.OnMoveHandler += OnJump;
 
-			LoadBindings();
+            LoadBindings();
 		}
 
+        void OnJump()
+        {
+            Debug.Log("jump" + playerActions.Jump.WasPressed);
+        }
 
-		void OnDisable()
+        void OnDisable()
 		{
 			// This properly disposes of the action set and unsubscribes it from
 			// update events so that it doesn't do additional processing unnecessarily.

@@ -1,6 +1,7 @@
 namespace InControl
 {
-	using UnityEngine;
+    using System;
+    using UnityEngine;
 
 
 	public class TwoAxisInputControl : IInputControl
@@ -15,7 +16,9 @@ namespace InControl
 		public OneAxisInputControl Up { get; protected set; }
 		public OneAxisInputControl Down { get; protected set; }
 
-		public ulong UpdateTick { get; protected set; }
+        public event Action OnMoveHandler;
+
+        public ulong UpdateTick { get; protected set; }
 
 		float sensitivity = 1.0f;
 		float lowerDeadZone = 0.0f;
@@ -111,6 +114,11 @@ namespace InControl
 			{
 				HasChanged = false;
 			}
+
+            if ((X != 0 || Y != 0) && OnMoveHandler!=null)
+            {
+                OnMoveHandler();
+            }
 		}
 
 

@@ -486,22 +486,29 @@ namespace InControl.ReorderableList
 		/// <param name="adaptor">Reorderable list adaptor.</param>
 		private void PrepareState( int controlID, IReorderableListAdaptor adaptor )
 		{
-			_controlID = controlID;
-			_visibleRect = GUIHelper.VisibleRect();
+            try
+            {
+                _controlID = controlID;
+                _visibleRect = GUIHelper.VisibleRect();
 
-			if ((flags & ReorderableListFlags.ShowIndices) != 0)
-			{
-				int digitCount = Mathf.Max( 2, Mathf.CeilToInt( Mathf.Log10( (float) adaptor.Count ) ) );
-				_indexLabelWidth = digitCount * 8 + 8;
-			}
-			else
-			{
-				_indexLabelWidth = 0;
-			}
+                if ((flags & ReorderableListFlags.ShowIndices) != 0)
+                {
+                    int digitCount = Mathf.Max(2, Mathf.CeilToInt(Mathf.Log10((float)adaptor.Count)));
+                    _indexLabelWidth = digitCount * 8 + 8;
+                }
+                else
+                {
+                    _indexLabelWidth = 0;
+                }
 
-			_tracking = IsTrackingControl( controlID );
+                _tracking = IsTrackingControl(controlID);
 
-			_allowReordering = (flags & ReorderableListFlags.DisableReordering) == 0;
+                _allowReordering = (flags & ReorderableListFlags.DisableReordering) == 0;
+            }catch(Exception e)
+            {
+                //Debug.Log("ignore editor error");
+            }
+
 		}
 
 		#endregion

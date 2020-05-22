@@ -35,7 +35,7 @@
 			// playerActions.Back.AddDefaultBinding( Key.Shift, Key.Tab );
 			// playerActions.Next.AddDefaultBinding( KeyCombo.With( Key.Tab ).AndNot( Key.Shift ) );
 
-			playerActions.Fire.AddDefaultBinding( Key.A );
+			playerActions.Fire.AddDefaultBinding( Key.Space );
 			playerActions.Fire.AddDefaultBinding( InputControlType.Action1 );
 			playerActions.Fire.AddDefaultBinding( Mouse.LeftButton );
 
@@ -48,7 +48,12 @@
 			playerActions.Left.AddDefaultBinding( Key.LeftArrow );
 			playerActions.Right.AddDefaultBinding( Key.RightArrow );
 
-			playerActions.Left.AddDefaultBinding( InputControlType.LeftStickLeft );
+            playerActions.Up.AddDefaultBinding(Key.W);
+            playerActions.Down.AddDefaultBinding(Key.S);
+            playerActions.Left.AddDefaultBinding(Key.A);
+            playerActions.Right.AddDefaultBinding(Key.D);
+
+            playerActions.Left.AddDefaultBinding( InputControlType.LeftStickLeft );
 			playerActions.Right.AddDefaultBinding( InputControlType.LeftStickRight );
 			playerActions.Up.AddDefaultBinding( InputControlType.LeftStickUp );
 			playerActions.Down.AddDefaultBinding( InputControlType.LeftStickDown );
@@ -57,11 +62,6 @@
 			playerActions.Right.AddDefaultBinding( InputControlType.DPadRight );
 			playerActions.Up.AddDefaultBinding( InputControlType.DPadUp );
 			playerActions.Down.AddDefaultBinding( InputControlType.DPadDown );
-
-			playerActions.Up.AddDefaultBinding( Mouse.PositiveY );
-			playerActions.Down.AddDefaultBinding( Mouse.NegativeY );
-			playerActions.Left.AddDefaultBinding( Mouse.NegativeX );
-			playerActions.Right.AddDefaultBinding( Mouse.PositiveX );
 
 			playerActions.ListenOptions.IncludeUnknownControllers = true;
 			playerActions.ListenOptions.MaxAllowedBindings = 4;
