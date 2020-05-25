@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VFramework.Common;
 
 namespace VFramework.Character
 {
@@ -147,7 +148,7 @@ namespace VFramework.Character
             {
                 //RaycastHit2D[] hits = Physics2D.LinecastAll(new Vector2(0, 4), new Vector2(0, 7), 1<<LayerMask.NameToLayer("StaticScene"));
                 //Debug.Log(hits.Length);
-                RushTo(5, Vector3.up, 20, 1<<LayerMask.NameToLayer("StaticScene"), 0.3f);
+                RushTo(5, Vector3.up, 20, GlobalLayerDef.StaticSceneCheckLayer, 0.3f);
             }
         }
 
