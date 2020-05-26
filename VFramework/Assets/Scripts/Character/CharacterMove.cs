@@ -121,10 +121,10 @@ namespace VFramework.Character
         /// <param name="moveSpeed">移动速度</param>
         /// <param name="obstacleLayer">障碍层级</param>
         /// <param name="checkRadius">检测半径</param>
-        public void MoveFunc(Vector3 moveDir, float moveSpeed, int obstacleLayer, float checkRadius)
+        public void MoveFunc(Vector3 moveDir, float moveSpeed, int obstacleLayer, float checkRadius,bool smoothWall)
         {
             float moveAdd = 0;
-            MoveTo(moveDir, moveSpeed, obstacleLayer, checkRadius,out moveAdd);
+            MoveTo(moveDir, moveSpeed, obstacleLayer, checkRadius,out moveAdd, smoothWall);
         }
 
         #endregion
@@ -163,7 +163,7 @@ namespace VFramework.Character
         /// <param name="checkRadius">障碍检测半径</param>
         /// <param name="moveAdd">移动距离</param>
         /// <returns></returns>
-        bool MoveTo(Vector3 moveDir, float moveSpeed, int obstacleLayer, float checkRadius, out float moveAdd)
+        bool MoveTo(Vector3 moveDir, float moveSpeed, int obstacleLayer, float checkRadius, out float moveAdd, bool smoothWall = false)
         {
             Vector3 vMove = moveDir * moveSpeed * Time.deltaTime;
 
@@ -173,8 +173,36 @@ namespace VFramework.Character
             Collider2D collider2D = RaycastCircle(oldPos, checkRadius, moveDir, vMove.magnitude, obstacleLayer);
             if (collider2D != null)
             {
-                moveAdd = 0;
-                return false;
+                if (!smoothWall || vMove.x==0 || vMove.y==0)
+                {
+                    moveAdd = 0;
+                    return false;
+                }
+                else
+                {
+                    //尝试沿墙滑动,vMove方向x,y值必须有值，把vMove分解成两个方向,哪个方向能移动就朝哪个方向移动
+                    Vector3 vTest = moveDir;
+                    vTest.x = 0;
+                    vMove = vTest * moveSpeed * Time.deltaTime;
+                    transform.localPosition = oldLocalPos + vMove;
+                    collider2D = RaycastCircle(oldPos, checkRadius, vTest, vMove.magnitude, obstacleLayer);
+
+                    if (collider2D != null)
+                    {
+                        vTest = moveDir;
+                        vTest.y = 0;
+                        vMove = vTest * moveSpeed * Time.deltaTime;
+                        transform.localPosition = oldLocalPos + vMove;
+                        collider2D = RaycastCircle(oldPos, checkRadius, vTest, vMove.magnitude, obstacleLayer);
+
+                        if (collider2D != null)
+                        {
+                            transform.localPosition = oldLocalPos;
+                            moveAdd = 0;
+                            return false;
+                        }
+                    }
+                }
             }
 
             moveAdd = vMove.magnitude;
@@ -210,6 +238,26 @@ namespace VFramework.Character
         }
 
         /// <summary>
+        /// 检测单点，圆形检测
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="radius"></param>
+        /// <param name="layerMask"></param>
+        /// <returns></returns>
+        Collider2D OverlapCircle(Vector2 point, float radius, int layerMask)
+        {
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(point, radius, layerMask);
+            foreach (var collider in colliders)
+            {
+                if (collider.gameObject != this.gameObject)
+                {
+                    return collider;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// 根据方向获取旋转Quaternion
         /// </summary>
         /// <param name="dir"></param>
@@ -217,7 +265,7 @@ namespace VFramework.Character
         private Quaternion GetQuaternion(Vector3 dir)
         {
             //LookRotation的含义就是让Z方向对齐第一个参数，y轴对齐第二参数对齐
-            return Quaternion.LookRotation(Vector3.forward, dir);
+            return Quaternion.LookRotation(Vector3.forward, -dir);
         }
 
         private Quaternion GetQuaternion(float angle)

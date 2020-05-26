@@ -1,7 +1,10 @@
+
+
 namespace BindingsExample
 {
 	using InControl;
 	using UnityEngine;
+    using VFramework.Common;
 
 
 	public class BindingsExample : MonoBehaviour
@@ -15,16 +18,10 @@ namespace BindingsExample
 		{
 			// See PlayerActions.cs for this setup.
 			playerActions = PlayerActions.CreateWithDefaultBindings();
-            //playerActions.Jump.WasReleasedAction += OnJump;
-            playerActions.Move.OnMoveHandler += OnJump;
 
             LoadBindings();
 		}
 
-        void OnJump()
-        {
-            Debug.Log("jump" + playerActions.Jump.WasPressed);
-        }
 
         void OnDisable()
 		{
@@ -46,9 +43,6 @@ namespace BindingsExample
 			transform.Rotate( Vector3.right, 500.0f * Time.deltaTime * playerActions.Move.Y, Space.World );
 
 			var fireColor = playerActions.Fire.IsPressed ? Color.red : Color.white;
-			var jumpColor = playerActions.Jump.IsPressed ? Color.green : Color.white;
-
-			cachedRenderer.material.color = Color.Lerp( fireColor, jumpColor, 0.5f );
 		}
 
 

@@ -1,4 +1,4 @@
-﻿namespace BindingsExample
+﻿namespace VFramework.Common
 {
 	using InControl;
 	using UnityEngine;
@@ -7,24 +7,38 @@
 	public class PlayerActions : PlayerActionSet
 	{
 		public PlayerAction Fire;
-		public PlayerAction Jump;
+		public PlayerAction Rush;
+
 		public PlayerAction Left;
 		public PlayerAction Right;
 		public PlayerAction Up;
 		public PlayerAction Down;
 		public PlayerTwoAxisAction Move;
 
+        public PlayerAction MouseLeft;
+        public PlayerAction MouseRight;
+        public PlayerAction MouseUp;
+        public PlayerAction MouseDown;
+        public PlayerTwoAxisAction MouseMove;
 
-		public PlayerActions()
+
+        public PlayerActions()
 		{
 			Fire = CreatePlayerAction( "Fire" );
-			Jump = CreatePlayerAction( "Jump" );
+            Rush = CreatePlayerAction("Rush");
+
 			Left = CreatePlayerAction( "Move Left" );
 			Right = CreatePlayerAction( "Move Right" );
 			Up = CreatePlayerAction( "Move Up" );
 			Down = CreatePlayerAction( "Move Down" );
 			Move = CreateTwoAxisPlayerAction( Left, Right, Down, Up );
-		}
+
+            MouseLeft = CreatePlayerAction("Mouse Left");
+            MouseRight = CreatePlayerAction("Mouse Right");
+            MouseUp = CreatePlayerAction("Mouse Up");
+            MouseDown = CreatePlayerAction("Mouse Down");
+            MouseMove = CreateTwoAxisPlayerAction(MouseLeft, MouseRight, MouseDown, MouseUp);
+        }
 
 
 		public static PlayerActions CreateWithDefaultBindings()
@@ -39,9 +53,9 @@
 			playerActions.Fire.AddDefaultBinding( InputControlType.Action1 );
 			playerActions.Fire.AddDefaultBinding( Mouse.LeftButton );
 
-			playerActions.Jump.AddDefaultBinding( Key.Space );
-			playerActions.Jump.AddDefaultBinding( InputControlType.Action3 );
-			playerActions.Jump.AddDefaultBinding( InputControlType.Back );
+			playerActions.Rush.AddDefaultBinding( Key.Space );
+			playerActions.Rush.AddDefaultBinding( InputControlType.Action3 );
+			playerActions.Rush.AddDefaultBinding( InputControlType.Back );
 
 			playerActions.Up.AddDefaultBinding( Key.UpArrow );
 			playerActions.Down.AddDefaultBinding( Key.DownArrow );
@@ -52,6 +66,11 @@
             playerActions.Down.AddDefaultBinding(Key.S);
             playerActions.Left.AddDefaultBinding(Key.A);
             playerActions.Right.AddDefaultBinding(Key.D);
+
+            playerActions.MouseUp.AddDefaultBinding(Mouse.PositiveY);
+            playerActions.MouseDown.AddDefaultBinding(Mouse.NegativeY);
+            playerActions.MouseLeft.AddDefaultBinding(Mouse.NegativeX);
+            playerActions.MouseRight.AddDefaultBinding(Mouse.PositiveX);
 
             playerActions.Left.AddDefaultBinding( InputControlType.LeftStickLeft );
 			playerActions.Right.AddDefaultBinding( InputControlType.LeftStickRight );
