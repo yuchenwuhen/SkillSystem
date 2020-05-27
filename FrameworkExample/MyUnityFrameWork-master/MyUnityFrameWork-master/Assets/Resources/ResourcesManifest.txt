@@ -2,6 +2,7 @@ Res	Path
 type	String
 note
 default	资源相对路径
+boss2	audio/boss2
 111	config/111
 bundleconfig	config/bundleconfig
 bundleconfig.json	config/bundleconfig.json

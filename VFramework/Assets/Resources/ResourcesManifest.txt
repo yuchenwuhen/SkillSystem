@@ -1,0 +1,11 @@
+Res	Path
+type	String
+note
+default	资源相对路径
+player	animations/player
+boss2	audio/boss2
+basemeleeskill	skill/basemeleeskill
+attackaround	sprite/player/attackaround
+newattack	sprite/player/newattack
+newwalk	sprite/player/newwalk
+resourcesmanifest	resourcesmanifest

@@ -7,8 +7,7 @@ public class test : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
-        //AnimSystem.Move(gameObject, null,Vector3.zero, 0.5f, isLocal: true);
-        //AnimSystem.Move(gameObject,,,,,,,,,,)
+        this.GetComponent<AudioSource>().clip = ResourceManager.Load<AudioClip>("boss2");
 	}
 
     private void OnGUI()

@@ -39,6 +39,7 @@ public static class ResourceManager
 #endif
     private static void Initialize()
     {
+        Debug.Log("cc");
         Initialize(AssetsLoadType.Resources, false);
     }
     /// <summary>
