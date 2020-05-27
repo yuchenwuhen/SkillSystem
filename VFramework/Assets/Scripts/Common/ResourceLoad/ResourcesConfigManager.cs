@@ -19,6 +19,39 @@ namespace VFramework.Common
             s_isInit = false;
         }
 
+        /// <summary>
+        /// 获取加载路径
+        /// </summary>
+        /// <param name="bundleName"></param>
+        /// <returns></returns>
+        public static string GetLoadPath(string name)
+        {
+            string path = GetResourcePath(name);
+            if (assetsloadType == AssetsLoadType.Resources)
+                return path;
+            else
+            {
+                return GetLoadPathBase(assetsloadType, path);
+            }
+        }
+
+        public static string GetResourcePath(string bundleName)
+        {
+            bundleName = bundleName.ToLower();
+
+            if (!s_isInit)
+            {
+                Initialize();
+            }
+
+            if (!s_config.ContainsKey(bundleName))
+            {
+                throw new Exception("RecourcesConfigManager can't find ->" + bundleName + "<-");
+            }
+
+            return s_config[bundleName].GetString(c_PathKey);
+        }
+
 #if UNITY_EDITOR
         public const string MainKey = "Res";
         static int s_direIndex = 0;
