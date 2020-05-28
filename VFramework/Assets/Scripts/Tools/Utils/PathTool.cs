@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using UnityEngine;
 
@@ -149,6 +150,19 @@ namespace VFramework.Tools
         }
 
 #endif
+
+        /// <summary>
+        /// 移除扩展名
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string RemoveExtension(string path)
+        {
+            string ss = path;
+            if (Path.HasExtension(path))
+                ss = Path.ChangeExtension(path, null);
+            return ss;
+        }
     }
 }
 

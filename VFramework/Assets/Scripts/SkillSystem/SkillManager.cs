@@ -36,7 +36,7 @@ namespace VFramework.Skill
         /// <param name=""></param>
         private void InitData(SkillData data)
         {
-            data.skillPrefab = ResourcesMgr.Load<GameObject>(data.prefabName);
+            data.skillPrefab = ResourcesManager.Load<GameObject>(data.prefabName);
             data.owner = gameObject;
         }
 

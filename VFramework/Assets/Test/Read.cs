@@ -9,7 +9,8 @@ public class Read : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Debug.Log(data.num);
+        var go = Instantiate(ResourcesManager.Load<GameObject>("Cube"));
+        go.GetComponent<MeshRenderer>().material = ResourcesManager.Load<Material>("TestCube");
     }
 
     private void OnGUI()

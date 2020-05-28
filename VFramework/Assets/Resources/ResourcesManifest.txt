@@ -4,6 +4,8 @@ note
 default	资源相对路径
 player	animations/player
 boss2	audio/boss2
+cube	audio/cube
+testcube	audio/testcube
 basemeleeskill	skill/basemeleeskill
 attackaround	sprite/player/attackaround
 newattack	sprite/player/newattack

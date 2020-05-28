@@ -56,7 +56,7 @@ namespace VFramework.Common
 
         private GameObject AddObject(string key)
         {
-            GameObject prefab = ResourcesMgr.Load<GameObject>(key);
+            GameObject prefab = ResourcesManager.Load<GameObject>(key);
             GameObject go = GameObject.Instantiate(prefab);
             if (!m_cacheList.ContainsKey(key))
             {

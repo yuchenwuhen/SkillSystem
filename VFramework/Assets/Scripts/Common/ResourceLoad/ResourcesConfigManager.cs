@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -12,7 +13,15 @@ namespace VFramework.Common
         public const string ManifestFileName = "ResourcesManifest";
         public const string PathKey = "Path";
 
+        static DataTable s_config;
+
         static bool s_isInit = false;
+
+        static void Initialize()
+        {
+            s_isInit = true;
+            LoadResourceConfig();
+        }
 
         public static void ClearConfig()
         {
@@ -24,15 +33,26 @@ namespace VFramework.Common
         /// </summary>
         /// <param name="bundleName"></param>
         /// <returns></returns>
-        public static string GetLoadPath(string name)
+        public static string GetLoadPath(AssetsLoadType assetsLoadType,string name)
         {
             string path = GetResourcePath(name);
-            if (assetsloadType == AssetsLoadType.Resources)
+            if (assetsLoadType == AssetsLoadType.Resources)
                 return path;
             else
             {
-                return GetLoadPathBase(assetsloadType, path);
+                return GetLoadPathBase(assetsLoadType, path);
             }
+        }
+
+        /// <summary>
+        /// TodoAssetBundle资源加载
+        /// </summary>
+        /// <param name="assetsloadType"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string GetLoadPathBase(AssetsLoadType assetsloadType, string path)
+        {
+            return "";
         }
 
         public static string GetResourcePath(string bundleName)
@@ -49,7 +69,25 @@ namespace VFramework.Common
                 throw new Exception("RecourcesConfigManager can't find ->" + bundleName + "<-");
             }
 
-            return s_config[bundleName].GetString(c_PathKey);
+            return s_config[bundleName].GetString(PathKey);
+        }
+
+        public static void LoadResourceConfig()
+        {
+#if !UNITY_WEBGL
+            string data = "";
+
+            if (ResourcesManager.LoadType == AssetsLoadType.Resources)
+            {
+                data = ResourceIOTool.ReadStringByResource(ManifestFileName + "." + DataManager.ExpandName);
+            }
+            else
+            {
+                //Todo AssetBundle加载
+            }
+
+            s_config = DataTable.Analysis(data);
+#endif
         }
 
 #if UNITY_EDITOR

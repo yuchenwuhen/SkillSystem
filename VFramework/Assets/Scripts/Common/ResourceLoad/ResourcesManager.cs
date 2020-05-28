@@ -6,6 +6,53 @@ namespace VFramework.Common
 {
     public static class ResourcesManager
     {
+        private static AssetsLoadType m_loadType = AssetsLoadType.Resources;
+        public static AssetsLoadType LoadType { get { return m_loadType; } }
+
+        public static bool UseCache
+        {
+            get; private set;
+        }
+
+        private static AssetsLoadController loadAssetsController;
+
+#if UNITY_EDITOR
+        //UnityEditor模式下编译完成后自动初始化
+        [UnityEditor.InitializeOnLoadMethod]
+#endif
+        private static void Initialize()
+        {
+            Initialize(AssetsLoadType.Resources, false);
+        }
+
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="loadType"></param>
+        /// <param name="useCache"></param>
+        public static void Initialize(AssetsLoadType loadType, bool useCache)
+        {
+            //if (isInit)
+            //    return;
+
+
+            if (loadType == AssetsLoadType.AssetBundle)
+            {
+                useCache = true;
+            }
+            if (!Application.isPlaying)
+            {
+                useCache = false;
+            }
+            UseCache = useCache;
+            ResourcesManager.m_loadType = loadType;
+            ReleaseAll();
+            //GameInfoCollecter.AddAppInfoValue("AssetsLoadType", loadType);
+
+            loadAssetsController = new AssetsLoadController(loadType, useCache);
+            //Debug.Log("ResourceManager初始化 AssetsLoadType:" + loadType + " useCache:" + useCache);
+        }
+
         /// <summary>
         /// 加载资源
         /// 注意释放资源，方法： DestoryAssetsCounter
@@ -16,9 +63,10 @@ namespace VFramework.Common
         public static T Load<T>(string name) where T : Object
         {
             T res = null;
-            string path = ResourcesConfigManager.GetLoadPath(loadType, name);
+            string path = ResourcesConfigManager.GetLoadPath(m_loadType, name);
 
             AssetsData assets = loadAssetsController.LoadAssets<T>(path);
+            Debug.Log(assets.assetName +":"+ assets.GetObjectsMemorySize());
             if (assets != null)
             {
                 res = assets.GetAssets<T>();
@@ -29,6 +77,22 @@ namespace VFramework.Common
                 Debug.LogError("Error=> Load Name :" + name + "  Type:" + typeof(T).FullName + "\n" + " Load Object:" + res);
             }
             return res;
+        }
+
+        public static void ReleaseByPath(string path)
+        {
+            loadAssetsController.Release(path);
+        }
+
+        /// <summary>
+        /// 卸载所有资源
+        /// </summary>
+        /// <param name="isForceAB">是否强制卸载bundle（true:bundle包和资源一起卸载；false：只卸载bundle包）</param>
+        public static void ReleaseAll(bool isForceAB = true)
+        {
+            if (loadAssetsController != null)
+                loadAssetsController.ReleaseAll(isForceAB);
+            //ResourcesConfigManager.ClearConfig();
         }
     }
 }
