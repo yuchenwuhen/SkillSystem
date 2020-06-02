@@ -12,7 +12,7 @@ namespace VFramework.Common
 
     public class GameObjectPool : MonoSingleton<GameObjectPool>
     {
-        private Dictionary<string, List<GameObject>> m_cacheList ;
+        private Dictionary<string, List<GameObject>> m_cacheList;
 
         public override void AwakeInit()
         {
@@ -37,7 +37,7 @@ namespace VFramework.Common
             }
 
             UseObject(position, rotation, go);
-          
+
             return go;
         }
 
@@ -57,12 +57,16 @@ namespace VFramework.Common
         private GameObject AddObject(string key)
         {
             GameObject prefab = ResourcesManager.Load<GameObject>(key);
-            GameObject go = GameObject.Instantiate(prefab);
-            if (!m_cacheList.ContainsKey(key))
+            if (prefab == null)
             {
-                m_cacheList.Add(key, new List<GameObject>());
+                Debug.LogError("cant load resource " + key);
             }
-            m_cacheList[key].Add(go);
+            GameObject go = GameObject.Instantiate(prefab);
+            //if (!m_cacheList.ContainsKey(key))
+            //{
+            //    m_cacheList.Add(key, new List<GameObject>());
+            //}
+            //m_cacheList[key].Add(go);
 
             return go;
         }
@@ -71,13 +75,20 @@ namespace VFramework.Common
         {
             if (m_cacheList.ContainsKey(key))
             {
-                return m_cacheList[key].Find(g => !g.activeInHierarchy);
+                if (m_cacheList[key].Count > 0)
+                {
+                    var go = m_cacheList[key][0];
+                    m_cacheList[key].Remove(go);
+                    return go;
+                }
+                return null;
             }
             return null;
         }
 
         /// <summary>
         /// 回收对象
+        /// 因为resources目录索引是prefab name并且唯一,所以根据GameObject来判断
         /// </summary>
         /// <param name="go"></param>
         /// <param name="delay">延迟时间</param>
@@ -89,6 +100,19 @@ namespace VFramework.Common
         private IEnumerator DelayCollect(GameObject go, float delay)
         {
             yield return new WaitForSeconds(delay);
+            //go 名字一般为xx(clone);
+            var index = go.name.IndexOf('(');
+            string name = "";
+            name = index == -1 ? go.name : go.name.Substring(0, index);
+            if (m_cacheList.ContainsKey(name))
+            {
+                m_cacheList[name].Add(go);
+            }
+            else
+            {
+                m_cacheList.Add(name, new List<GameObject>());
+                m_cacheList[name].Add(go);
+            }
             go.SetActive(false);
         }
 
@@ -96,7 +120,7 @@ namespace VFramework.Common
         {
             if (m_cacheList.ContainsKey(key))
             {
-                for (int i = m_cacheList[key].Count-1; i >= 0; i--)
+                for (int i = m_cacheList[key].Count - 1; i >= 0; i--)
                 {
                     Destroy(m_cacheList[key][i]);
                 }
@@ -108,7 +132,7 @@ namespace VFramework.Common
         public void ClearAll()
         {
             List<string> keyList = new List<string>(m_cacheList.Keys);
-            foreach(var key in keyList)
+            foreach (var key in keyList)
             {
                 Clear(key);
             }

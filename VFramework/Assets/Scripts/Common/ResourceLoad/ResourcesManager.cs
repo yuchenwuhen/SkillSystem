@@ -85,6 +85,29 @@ namespace VFramework.Common
         }
 
         /// <summary>
+        /// 释放资源 （通过 ResourceManager.Load<>() 加载出来的）
+        /// </summary>
+        /// <param name="unityObject"></param>
+        /// <param name="times"></param>
+        public static void DestoryAssetsCounter(Object unityObject, int times = 1)
+        {
+            DestoryAssetsCounter(unityObject.name, times);
+        }
+
+        public static void DestoryAssetsCounter(string name, int times = 1)
+        {
+            if (!ResourcesConfigManager.GetIsExitRes(name))
+                return;
+            string path = ResourcesConfigManager.GetLoadPath(m_loadType, name);
+            if (times <= 0)
+                times = 1;
+            for (int i = 0; i < times; i++)
+            {
+                loadAssetsController.DestoryAssetsCounter(path);
+            }
+        }
+
+        /// <summary>
         /// 卸载所有资源
         /// </summary>
         /// <param name="isForceAB">是否强制卸载bundle（true:bundle包和资源一起卸载；false：只卸载bundle包）</param>

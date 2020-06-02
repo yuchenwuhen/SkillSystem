@@ -72,6 +72,18 @@ namespace VFramework.Common
             return s_config[bundleName].GetString(PathKey);
         }
 
+        public static bool GetIsExitRes(string resName)
+        {
+            resName = resName.ToLower();
+
+            if (!s_isInit || s_config == null)
+            {
+                Initialize();
+            }
+
+            return s_config.ContainsKey(resName);
+        }
+
         public static void LoadResourceConfig()
         {
 #if !UNITY_WEBGL

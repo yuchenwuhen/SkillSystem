@@ -6,19 +6,23 @@ using VFramework.Common;
 public class Read : MonoBehaviour
 {
     float TotleVolume = 1;
+
+    private void Awake()
+    {
+        AudioPlayManager.Init();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        var go = Instantiate(ResourcesManager.Load<GameObject>("Cube"));
-        go.GetComponent<MeshRenderer>().material = ResourcesManager.Load<Material>("TestCube");
+        AudioPlayManager.PlayMusic2D("boss2", 1, 1f);
     }
 
     private void OnGUI()
     {
         if (GUI.Button(new Rect(10, 10, 100, 20), "Save"))
         {
-            TotleVolume = 0.3f;
-            RecordManager.SaveRecord("GameSettingData", "TotleVolume", TotleVolume);
+            AudioPlayManager.StopMusic2D(1);
         }
 
         if (GUI.Button(new Rect(10, 40, 100, 20), "Show"))

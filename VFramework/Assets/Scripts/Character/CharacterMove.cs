@@ -25,7 +25,7 @@ namespace VFramework.Character
         /// <param name="dir"></param>
         public void InvokeRotate(Vector3 dir)
         {
-            transform.rotation = GetQuaternion(dir);
+            transform.rotation = GetQuaternion(dir.normalized);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace VFramework.Character
             //初始化
             m_rotate = true;
             m_rotateSpeed = rotateSpeed;
-            m_targetRotation = GetQuaternion(dir);
+            m_targetRotation = GetQuaternion(dir.normalized);
         }
 
         /// <summary>
@@ -87,10 +87,16 @@ namespace VFramework.Character
             }
         }
 
-        public void RushTo(float rushDistance,Vector3 rushDir, float rushSpeed, int obstacleLayer, float checkRadius, Action rushCallback = null)
+        public void RushTo(float rushDistance, Vector3 rushDir, float rushSpeed, int obstacleLayer, float checkRadius, Action rushCallback = null)
         {
             m_startRush = true;
-            m_rushCoroutine = StartCoroutine(RushIEnumerator(rushDistance,rushDir,rushSpeed,obstacleLayer,checkRadius,rushCallback));
+            m_rushCoroutine = StartCoroutine(RushIEnumerator(rushDistance, rushDir.normalized, rushSpeed, obstacleLayer, checkRadius, rushCallback));
+        }
+
+        public void RushTo(float rushDistance, Vector3 rushDir, float rushSpeed, Action rushCallback = null)
+        {
+            m_startRush = true;
+            m_rushCoroutine = StartCoroutine(RushIEnumerator(rushDistance, rushDir.normalized, rushSpeed, -1, 0, rushCallback));
         }
 
         IEnumerator RushIEnumerator(float rushDistance,Vector3 rushDir, float rushSpeed, int obstacleLayer, float checkRadius, Action rushCallback = null)
