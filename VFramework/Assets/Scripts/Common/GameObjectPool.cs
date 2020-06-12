@@ -21,7 +21,7 @@ namespace VFramework.Common
         }
 
         /// <summary>
-        /// 根据名字创建对象，需要提前调用Tools菜单中的GeneratorRes方法
+        /// 根据名字创建对象
         /// </summary>
         /// <param name="key"></param>
         /// <param name="position"></param>
@@ -35,6 +35,15 @@ namespace VFramework.Common
             {
                 go = AddObject(key);
             }
+
+
+            if (go == null)
+            {
+                Debug.LogError("GameObjectPool 加载失败：" + name);
+                return go;
+            }
+
+            AssetsUnloadHandler.MarkUseAssets(name);
 
             UseObject(position, rotation, go);
 
@@ -87,6 +96,58 @@ namespace VFramework.Common
         }
 
         /// <summary>
+        /// 创建物体（parent不为null时，position为本地坐标）
+        /// </summary>
+        /// <param name="objName"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="prefab"></param>
+        /// <param name="parent"></param>
+        /// <param name="isSetActive"></param>
+        /// <returns></returns>
+        private GameObject CreateObject(string objName, Vector3 position, Quaternion rotation, GameObject prefab, GameObject parent = null, bool isSetActive = true)
+        {
+            GameObject go = null;
+            string name = objName;
+            if (string.IsNullOrEmpty(name))
+            {
+                name = prefab.name;
+            }
+
+            go = CreateObject(name, position,rotation);
+
+            if (isSetActive)
+                go.SetActive(true);
+
+            if (parent == null)
+            {
+                go.transform.SetParent(null);
+            }
+            else
+            {
+                go.transform.SetParent(parent.transform);
+                go.transform.position = position;
+            }
+            return go;
+        }
+
+        /// <summary>
+        /// 从对象池取出一个对象，如果没有，则直接创建它
+        /// </summary>
+        /// <param name="name">对象名</param>
+        /// <param name="parent">要创建到的父节点</param>
+        /// <returns>返回这个对象</returns>
+        public GameObject CreateGameObjectByPool(string name,Vector3 position, Quaternion rotation, GameObject prefab, GameObject parent, bool isSetActive = true)
+        {
+            return CreateObject(name, position, rotation, prefab, parent, isSetActive);
+        }
+
+        public GameObject CreateGameObjectByPool(string name, Vector3 position, Quaternion rotation, GameObject parent = null, bool isSetActive = true)
+        {
+            return CreateObject(name, position, rotation, null, parent, isSetActive);
+        }
+
+        /// <summary>
         /// 回收对象
         /// 因为resources目录索引是prefab name并且唯一,所以根据GameObject来判断
         /// </summary>
@@ -94,6 +155,11 @@ namespace VFramework.Common
         /// <param name="delay">延迟时间</param>
         public void CollectObject(GameObject go, float delay = 0)
         {
+            if (go == null)
+            {
+                return;
+            }
+
             StartCoroutine(DelayCollect(go, delay));
         }
 
@@ -101,9 +167,7 @@ namespace VFramework.Common
         {
             yield return new WaitForSeconds(delay);
             //go 名字一般为xx(clone);
-            var index = go.name.IndexOf('(');
-            string name = "";
-            name = index == -1 ? go.name : go.name.Substring(0, index);
+            string name = go.name.Replace("(Clone)", "");
             if (m_cacheList.ContainsKey(name))
             {
                 m_cacheList[name].Add(go);
