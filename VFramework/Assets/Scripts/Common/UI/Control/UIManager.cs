@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using VFramework.Common;
 
-namespace VFramework.Common
+namespace VFramework.UI
 {
     [RequireComponent(typeof(UIStackManager))]
     [RequireComponent(typeof(UILayerManager))]
@@ -196,7 +197,6 @@ namespace VFramework.Common
 
             GameObject UItmp = GameObjectPool.Instance.CreateGameObjectByPool(UIName,Vector3.zero,Quaternion.identity, UIManagerGo);
             UIWindowBase UIWIndowBase = UItmp.GetComponent<UIWindowBase>();
-            UISystemEvent.Dispatch(UIWIndowBase, UIEvent.OnInit);  //派发OnInit事件
 
             UIWIndowBase.windowStatus = UIWindowBase.WindowStatus.Create;
 
@@ -252,9 +252,10 @@ namespace VFramework.Common
 
             UISystemEvent.Dispatch(UIbase, UIEvent.OnOpened);  //派发OnOpened事件
 
-            UIAnimManager.StartEnterAnim(UIbase, callback, objs); //播放动画
+            //UIAnimManager.StartEnterAnim(UIbase, callback, objs); //播放动画
             return UIbase;
         }
+
         public static T OpenUIWindow<T>() where T : UIWindowBase
         {
             return (T)OpenUIWindow(typeof(T).Name);
@@ -284,7 +285,7 @@ namespace VFramework.Common
                     callback = CloseUIWindowCallBack;
                 }
                 UI.windowStatus = UIWindowBase.WindowStatus.CloseAnim;
-                UIAnimManager.StartExitAnim(UI, callback, objs);
+                //UIAnimManager.StartExitAnim(UI, callback, objs);
             }
             else
             {
@@ -378,10 +379,10 @@ namespace VFramework.Common
 
         public static void HideOtherUI(string UIName)
         {
-            List<string> keys = new List<string>(s_UIs.Keys);
+            List<string> keys = new List<string>(showUIList.Keys);
             for (int i = 0; i < keys.Count; i++)
             {
-                List<UIWindowBase> list = s_UIs[keys[i]];
+                List<UIWindowBase> list = showUIList[keys[i]];
                 for (int j = 0; j < list.Count; j++)
                 {
                     if (list[j].UIName != UIName)
@@ -394,10 +395,10 @@ namespace VFramework.Common
 
         public static void ShowOtherUI(string UIName)
         {
-            List<string> keys = new List<string>(s_UIs.Keys);
+            List<string> keys = new List<string>(showUIList.Keys);
             for (int i = 0; i < keys.Count; i++)
             {
-                List<UIWindowBase> list = s_UIs[keys[i]];
+                List<UIWindowBase> list = showUIList[keys[i]];
                 for (int j = 0; j < list.Count; j++)
                 {
                     if (list[j].UIName != UIName)
@@ -413,10 +414,10 @@ namespace VFramework.Common
         /// </summary>
         public static void CloseAllUI(bool isPlayerAnim = false)
         {
-            List<string> keys = new List<string>(s_UIs.Keys);
+            List<string> keys = new List<string>(showUIList.Keys);
             for (int i = 0; i < keys.Count; i++)
             {
-                List<UIWindowBase> list = s_UIs[keys[i]];
+                List<UIWindowBase> list = showUIList[keys[i]];
                 for (int j = 0; j < list.Count; j++)
                 {
                     CloseUIWindow(list[i], isPlayerAnim);
@@ -430,6 +431,298 @@ namespace VFramework.Common
         }
 
         #endregion
+
+        #region 打开UI列表的管理
+
+        /// <summary>
+        /// 删除所有打开的UI
+        /// </summary>
+        //public static void DestroyAllActiveUI()
+        //{
+        //    foreach (List<UIWindowBase> uis in showUIList.Values)
+        //    {
+        //        for (int i = 0; i < uis.Count; i++)
+        //        {
+        //            UISystemEvent.Dispatch(uis[i], UIEvent.OnDestroy);  //派发OnDestroy事件
+        //            try
+        //            {
+        //                uis[i].Dispose();
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                Debug.LogError("OnDestroy :" + e.ToString());
+        //            }
+        //            GameObjectManager.DestroyGameObjectByPool(uis[i].gameObject);
+        //        }
+        //    }
+
+        //    showUIList.Clear();
+        //}
+
+        public static T GetUI<T>() where T : UIWindowBase
+        {
+            return (T)GetUI(typeof(T).Name);
+        }
+        public static UIWindowBase GetUI(string UIname)
+        {
+            if (!showUIList.ContainsKey(UIname))
+            {
+                //Debug.Log("!ContainsKey " + UIname);
+                return null;
+            }
+            else
+            {
+                if (showUIList[UIname].Count == 0)
+                {
+                    //Debug.Log("s_UIs[UIname].Count == 0");
+                    return null;
+                }
+                else
+                {
+                    //默认返回最后创建的那一个
+                    return showUIList[UIname][showUIList[UIname].Count - 1];
+                }
+            }
+        }
+
+        //public static UIBase GetUIBaseByEventKey(string eventKey)
+        //{
+        //    string UIkey = eventKey.Split('.')[0];
+        //    string[] keyArray = UIkey.Split('_');
+
+        //    string uiEventKey = "";
+
+        //    UIBase uiTmp = null;
+        //    for (int i = 0; i < keyArray.Length; i++)
+        //    {
+        //        if (i == 0)
+        //        {
+        //            uiEventKey = keyArray[0];
+        //            uiTmp = GetUIWindowByEventKey(uiEventKey);
+        //        }
+        //        else
+        //        {
+        //            uiEventKey += "_" + keyArray[i];
+        //            uiTmp = uiTmp.GetItemByKey(uiEventKey);
+        //        }
+
+        //        Debug.Log("uiEventKey " + uiEventKey);
+        //    }
+
+        //    return uiTmp;
+        //}
+
+        //static Regex uiKey = new Regex(@"(\S+)\d+");
+
+        //static UIWindowBase GetUIWindowByEventKey(string eventKey)
+        //{
+        //    string UIname = uiKey.Match(eventKey).Groups[1].Value;
+
+        //    if (!s_UIs.ContainsKey(UIname))
+        //    {
+        //        throw new Exception("UIManager: GetUIWindowByEventKey error dont find UI name: ->" + eventKey + "<-  " + UIname);
+        //    }
+
+        //    List<UIWindowBase> list = s_UIs[UIname];
+        //    for (int i = 0; i < list.Count; i++)
+        //    {
+        //        if (list[i].UIEventKey == eventKey)
+        //        {
+        //            return list[i];
+        //        }
+        //    }
+
+        //    throw new Exception("UIManager: GetUIWindowByEventKey error dont find UI name: ->" + eventKey + "<-  " + UIname);
+        //}
+
+        static bool GetIsExits(UIWindowBase UI)
+        {
+            if (!showUIList.ContainsKey(UI.name))
+            {
+                return false;
+            }
+            else
+            {
+                return showUIList[UI.name].Contains(UI);
+            }
+        }
+
+        static void AddUI(UIWindowBase UI)
+        {
+            if (!showUIList.ContainsKey(UI.name))
+            {
+                showUIList.Add(UI.name, new List<UIWindowBase>());
+            }
+
+            showUIList[UI.name].Add(UI);
+
+            UI.Show();
+        }
+
+        static void RemoveUI(UIWindowBase UI)
+        {
+            if (UI == null)
+            {
+                throw new Exception("UIManager: RemoveUI error UI is null: !");
+            }
+
+            if (!showUIList.ContainsKey(UI.name))
+            {
+                throw new Exception("UIManager: RemoveUI error dont find UI name: ->" + UI.name + "<-  " + UI);
+            }
+
+            if (!showUIList[UI.name].Contains(UI))
+            {
+                throw new Exception("UIManager: RemoveUI error dont find UI: ->" + UI.name + "<-  " + UI);
+            }
+            else
+            {
+                showUIList[UI.name].Remove(UI);
+            }
+        }
+
+        /// <summary>
+        /// 分配ID，如果UIName已分配过，分配新的ID
+        /// </summary>
+        /// <param name="UIname"></param>
+        /// <returns></returns>
+        static int GetUIID(string UIname)
+        {
+            if (!showUIList.ContainsKey(UIname))
+            {
+                return 0;
+            }
+            else
+            {
+                int id = showUIList[UIname].Count;
+
+                for (int i = 0; i < showUIList[UIname].Count; i++)
+                {
+                    if (showUIList[UIname][i].UIID == id)
+                    {
+                        id++;
+                        i = 0;
+                    }
+                }
+
+                return id;
+            }
+        }
+
+        public static int GetNormalUICount()
+        {
+            return UIStackManager.m_normalStack.Count;
+        }
+
+        #endregion
+
+        #region 隐藏UI列表的管理
+
+        static void AddHideUI(UIWindowBase UI)
+        {
+            if (!hideUIList.ContainsKey(UI.name))
+            {
+                hideUIList.Add(UI.name, new List<UIWindowBase>());
+            }
+
+            hideUIList[UI.name].Add(UI);
+
+            UI.Hide();
+        }
+
+        /// <summary>
+        /// 获取一个隐藏的UI,如果有多个同名UI，则返回最后创建的那一个
+        /// </summary>
+        /// <param name="UIname">UI名</param>
+        /// <returns></returns>
+        public static UIWindowBase GetHideUI(string UIname)
+        {
+            if (!hideUIList.ContainsKey(UIname))
+            {
+                return null;
+            }
+            else
+            {
+                if (hideUIList[UIname].Count == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    UIWindowBase ui = hideUIList[UIname][hideUIList[UIname].Count - 1];
+                    //默认返回最后创建的那一个
+                    return ui;
+                }
+            }
+        }
+
+        static void RemoveHideUI(UIWindowBase UI)
+        {
+            if (UI == null)
+            {
+                throw new Exception("UIManager: RemoveUI error l_UI is null: !");
+            }
+
+            if (!hideUIList.ContainsKey(UI.name))
+            {
+                throw new Exception("UIManager: RemoveUI error dont find: " + UI.name + "  " + UI);
+            }
+
+            if (!hideUIList[UI.name].Contains(UI))
+            {
+                throw new Exception("UIManager: RemoveUI error dont find: " + UI.name + "  " + UI);
+            }
+            else
+            {
+                hideUIList[UI.name].Remove(UI);
+            }
+        }
+
+        #endregion
     }
+
+    #region UI事件 代理 枚举
+
+    /// <summary>
+    /// UI回调
+    /// </summary>
+    /// <param name="objs"></param>
+    public delegate void UICallBack(UIWindowBase UI, params object[] objs);
+    public delegate void UIAnimCallBack(UIWindowBase UIbase, UICallBack callBack, params object[] objs);
+
+    public enum UIType
+    {
+        GameUI = 0,
+
+        Fixed = 1,
+        Normal = 2,
+        TopBar = 3,
+        Upper = 4,
+        PopUp = 5,
+    }
+
+    public enum UIEvent
+    {
+        OnOpen,
+        OnOpened,
+
+        OnClose,
+        OnClosed,
+
+        OnHide,
+        OnShow,
+
+        OnInit,
+        OnDestroy,
+
+        OnRefresh,
+
+        OnStartEnterAnim,
+        OnCompleteEnterAnim,
+
+        OnStartExitAnim,
+        OnCompleteExitAnim,
+    }
+    #endregion
 }
 

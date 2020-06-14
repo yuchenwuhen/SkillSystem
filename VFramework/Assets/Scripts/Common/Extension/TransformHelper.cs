@@ -38,6 +38,44 @@ namespace VFramework.Common
             return go != null ? go.gameObject : null;
         }
 
+        /// <summary>
+        /// 找到子物体挂T组件的集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="currentTF"></param>
+        /// <returns></returns>
+        public static GameObject[] FindChildByComponent<T>(this Transform currentTF) where T : class
+        {
+            List<GameObject> cpList = new List<GameObject>();
+            if (currentTF==null)
+            {
+                return cpList.ToArray();
+            }
+
+            currentTF.FindChildListByComponent<T>(cpList);
+
+            return cpList.ToArray();
+        }
+
+        private static void FindChildListByComponent<T>(this Transform self,List<GameObject> cpList) where T : class
+        {
+            for (int i = 0; i < self.transform.childCount; i++)
+            {
+                Transform child = self.transform.GetChild(i);
+
+                T component = child.GetComponent<T>();
+                if (component != null)
+                {
+                    cpList.Add(child.gameObject);
+                }
+
+                if (child.childCount > 0)
+                {
+                    child.FindChildListByComponent<T>(cpList);
+                }
+            }
+        }
+
     }
 
 }

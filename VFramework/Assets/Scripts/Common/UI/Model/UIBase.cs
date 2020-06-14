@@ -10,8 +10,9 @@ namespace VFramework.UI
     /// <summary>
     /// UI类基类,包括窗口类，子Item类
     /// </summary>
-    public class UIBase : MonoBehaviour
+    public class UIBase : MonoBehaviour,UILifeCycleInterface
     {
+
 
         #region 重载方法
 
@@ -84,9 +85,17 @@ namespace VFramework.UI
             OnInit();
         }
 
+        public void Dispose()
+        {
+            
+        }
+
         #endregion
 
         #region 获取对象
+
+        [HideInInspector]
+        public List<GameObject> m_childUIList = new List<GameObject>();
 
         private Dictionary<string, GameObject> m_interactObjList = new Dictionary<string, GameObject>();
         Dictionary<string, Image> m_images = new Dictionary<string, Image>();
@@ -122,6 +131,10 @@ namespace VFramework.UI
             m_rectTransforms.Clear();
             m_inputFields.Clear();
             m_Sliders.Clear();
+
+            m_childUIList.Clear();
+
+            m_childUIList.AddRange(transform.FindChildByComponent<UILifeCycleInterface>());
         }
 
         /// <summary>
@@ -359,6 +372,44 @@ namespace VFramework.UI
 
         #endregion
 
+        #region 生命周期管理 
+
+        protected List<UILifeCycleInterface> m_lifeComponent = new List<UILifeCycleInterface>();
+
+        public void AddLifeCycleComponent(UILifeCycleInterface comp)
+        {
+            comp.Init(UIEventKey, m_lifeComponent.Count);
+            m_lifeComponent.Add(comp);
+        }
+
+        void DisposeLifeComponent()
+        {
+            for (int i = 0; i < m_lifeComponent.Count; i++)
+            {
+                try
+                {
+                    m_lifeComponent[i].Dispose();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("UIBase DisposeLifeComponent Exception -> UIEventKey: " + UIEventKey + " Exception: " + e.ToString());
+                }
+
+            }
+
+            m_lifeComponent.Clear();
+        }
+
+        #endregion
+
+        #region 注册监听
+
+        public virtual void RemoveAllListener()
+        {
+
+        }
+
+        #endregion
     }
 }
 
