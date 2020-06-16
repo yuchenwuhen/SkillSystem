@@ -1,10 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VFramework.Common;
 
 namespace VFramework.UI
 {
-
 
     public class UILayerManager : MonoBehaviour
     {
@@ -60,6 +61,7 @@ namespace VFramework.UI
                 }
             }
         }
+
 
         public void SetLayer(UIWindowBase ui, string cameraKey = null)
         {

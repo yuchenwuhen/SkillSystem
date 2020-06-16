@@ -692,13 +692,13 @@ namespace VFramework.UI
 
     public enum UIType
     {
-        GameUI = 0,
+        GameUI = 0,     //在UI分层中的最底层，一般用于游戏里面的血条，浮动UI等。
 
-        Fixed = 1,
-        Normal = 2,
-        TopBar = 3,
-        Upper = 4,
-        PopUp = 5,
+        Fixed = 1,      //在GameUI层之上，一般用于常驻的UI如主城UI。
+        Normal = 2,     //在Fixed之上，一般用于普通UI，例如商店。
+        TopBar = 3,     //在normal之上 ，一般用于常驻的置顶显示的UI,例如体力和金钱UI。 
+        Upper = 4,      //在TopBar之上 ，一般用于更上一层，例如对话框UI。 
+        PopUp = 5,      //在最上层，一般用来显示弹窗。
     }
 
     public enum UIEvent

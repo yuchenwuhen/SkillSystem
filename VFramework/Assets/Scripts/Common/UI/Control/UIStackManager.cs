@@ -10,6 +10,7 @@ namespace VFramework.UI
         public List<UIWindowBase> m_fixedStack = new List<UIWindowBase>();
         public List<UIWindowBase> m_popupStack = new List<UIWindowBase>();
         public List<UIWindowBase> m_topBarStack = new List<UIWindowBase>();
+        public List<UIWindowBase> m_upperStack = new List<UIWindowBase>();
 
         public void OnUIOpen(UIWindowBase ui)
         {
@@ -19,6 +20,7 @@ namespace VFramework.UI
                 case UIType.Normal: m_normalStack.Add(ui); break;
                 case UIType.PopUp: m_popupStack.Add(ui); break;
                 case UIType.TopBar: m_topBarStack.Add(ui); break;
+                case UIType.Upper: m_upperStack.Add(ui); break;
             }
         }
 
@@ -30,6 +32,7 @@ namespace VFramework.UI
                 case UIType.Normal: m_normalStack.Remove(ui); break;
                 case UIType.PopUp: m_popupStack.Remove(ui); break;
                 case UIType.TopBar: m_topBarStack.Remove(ui); break;
+                case UIType.Upper: m_upperStack.Remove(ui); break;
             }
         }
 
@@ -65,6 +68,11 @@ namespace VFramework.UI
                 case UIType.TopBar:
                     if (m_topBarStack.Count > 0)
                         return m_topBarStack[m_topBarStack.Count - 1];
+                    else
+                        return null;
+                case UIType.Upper:
+                    if (m_upperStack.Count > 0)
+                        return m_upperStack[m_upperStack.Count - 1];
                     else
                         return null;
             }

@@ -71,6 +71,7 @@ namespace VFramework.Common
                 Debug.LogError("cant load resource " + key);
             }
             GameObject go = GameObject.Instantiate(prefab);
+            go.name = prefab.name;
             //if (!m_cacheList.ContainsKey(key))
             //{
             //    m_cacheList.Add(key, new List<GameObject>());

@@ -10,4 +10,6 @@ basemeleeskill	skill/basemeleeskill
 attackaround	sprite/player/attackaround
 newattack	sprite/player/newattack
 newwalk	sprite/player/newwalk
+testwindow	ui/testwindow
+uimanager	ui/uimanager
 resourcesmanifest	resourcesmanifest
