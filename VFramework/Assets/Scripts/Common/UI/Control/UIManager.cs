@@ -252,7 +252,7 @@ namespace VFramework.UI
 
             UISystemEvent.Dispatch(UIbase, UIEvent.OnOpened);  //派发OnOpened事件
 
-            //UIAnimManager.StartEnterAnim(UIbase, callback, objs); //播放动画
+            UIAnimManager.StartEnterAnim(UIbase, callback, objs); //播放动画
             return UIbase;
         }
 
@@ -268,7 +268,7 @@ namespace VFramework.UI
         /// <param name="isPlayAnim">是否播放关闭动画</param>
         /// <param name="callback">动画播放完毕回调</param>
         /// <param name="objs">回调传参</param>
-        public static void CloseUIWindow(UIWindowBase UI, bool isPlayAnim = true, UICallBack callback = null, params object[] objs)
+        public static void CloseUIWindow(UIWindowBase UI, bool isPlayAnim = false, UICallBack callback = null, params object[] objs)
         {
             RemoveUI(UI);        //移除UI引用
             UI.RemoveAllListener();
@@ -310,7 +310,7 @@ namespace VFramework.UI
 
             UISystemEvent.Dispatch(UI, UIEvent.OnClosed);  //派发OnClosed事件
         }
-        public static void CloseUIWindow(string UIname, bool isPlayAnim = true, UICallBack callback = null, params object[] objs)
+        public static void CloseUIWindow(string UIname, bool isPlayAnim = false, UICallBack callback = null, params object[] objs)
         {
             UIWindowBase ui = GetUI(UIname);
 
@@ -324,7 +324,7 @@ namespace VFramework.UI
             }
         }
 
-        public static void CloseUIWindow<T>(bool isPlayAnim = true, UICallBack callback = null, params object[] objs) where T : UIWindowBase
+        public static void CloseUIWindow<T>(bool isPlayAnim = false, UICallBack callback = null, params object[] objs) where T : UIWindowBase
         {
             CloseUIWindow(typeof(T).Name, isPlayAnim, callback, objs);
         }

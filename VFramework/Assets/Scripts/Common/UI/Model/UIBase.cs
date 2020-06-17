@@ -404,10 +404,178 @@ namespace VFramework.UI
 
         #region 注册监听
 
+        protected List<Enum> m_EventNames = new List<Enum>();
+        protected List<EventHandRegisterInfo> m_EventListeners = new List<EventHandRegisterInfo>();
+
+        protected List<InputEventRegisterInfo> m_OnClickEvents = new List<InputEventRegisterInfo>();
+        protected List<InputEventRegisterInfo> m_LongPressEvents = new List<InputEventRegisterInfo>();
+        protected List<InputEventRegisterInfo> m_DragEvents = new List<InputEventRegisterInfo>();
+        protected List<InputEventRegisterInfo> m_BeginDragEvents = new List<InputEventRegisterInfo>();
+        protected List<InputEventRegisterInfo> m_EndDragEvents = new List<InputEventRegisterInfo>();
+
         public virtual void RemoveAllListener()
         {
+            for (int i = 0; i < m_EventListeners.Count; i++)
+            {
+                m_EventListeners[i].RemoveListener();
+            }
+            m_EventListeners.Clear();
 
+            for (int i = 0; i < m_OnClickEvents.Count; i++)
+            {
+                m_OnClickEvents[i].RemoveListener();
+            }
+            m_OnClickEvents.Clear();
+
+            for (int i = 0; i < m_LongPressEvents.Count; i++)
+            {
+                m_LongPressEvents[i].RemoveListener();
+            }
+            m_LongPressEvents.Clear();
+
+            #region 拖动事件
+            for (int i = 0; i < m_DragEvents.Count; i++)
+            {
+                m_DragEvents[i].RemoveListener();
+            }
+            m_DragEvents.Clear();
+
+            for (int i = 0; i < m_BeginDragEvents.Count; i++)
+            {
+                m_BeginDragEvents[i].RemoveListener();
+            }
+            m_BeginDragEvents.Clear();
+
+            for (int i = 0; i < m_EndDragEvents.Count; i++)
+            {
+                m_EndDragEvents[i].RemoveListener();
+            }
+            m_EndDragEvents.Clear();
+            #endregion
         }
+
+        #region 添加监听
+
+        bool GetRegister(List<InputEventRegisterInfo> list, string eventKey)
+        {
+            int registerCount = 0;
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].eventKey == eventKey)
+                {
+                    registerCount++;
+                }
+            }
+
+            return registerCount == 0;
+        }
+
+        public void AddOnClickListener(string buttonName, InputEventHandle<InputUIOnClickEvent> callback, string parm = null)
+        {
+            InputButtonClickRegisterInfo info = InputUIEventProxy.GetOnClickListener(GetButton(buttonName), UIEventKey, buttonName, parm, callback);
+            info.AddListener();
+            m_OnClickEvents.Add(info);
+        }
+
+        public void AddOnClickListenerByCreate(Button button, string compName, InputEventHandle<InputUIOnClickEvent> callback, string parm = null)
+        {
+            InputButtonClickRegisterInfo info = InputUIEventProxy.GetOnClickListener(button, UIEventKey, compName, parm, callback);
+            info.AddListener();
+            m_OnClickEvents.Add(info);
+        }
+
+        public void AddLongPressListener(string compName, InputEventHandle<InputUILongPressEvent> callback, string parm = null)
+        {
+            InputEventRegisterInfo<InputUILongPressEvent> info = InputUIEventProxy.GetLongPressListener(GetLongPressComp(compName), UIEventKey, compName, parm, callback);
+            info.AddListener();
+            m_LongPressEvents.Add(info);
+        }
+
+        public void AddBeginDragListener(string compName, InputEventHandle<InputUIOnBeginDragEvent> callback, string parm = null)
+        {
+            InputEventRegisterInfo<InputUIOnBeginDragEvent> info = InputUIEventProxy.GetOnBeginDragListener(GetDragComp(compName), UIEventKey, compName, parm, callback);
+            info.AddListener();
+            m_BeginDragEvents.Add(info);
+        }
+
+        public void AddEndDragListener(string compName, InputEventHandle<InputUIOnEndDragEvent> callback, string parm = null)
+        {
+            InputEventRegisterInfo<InputUIOnEndDragEvent> info = InputUIEventProxy.GetOnEndDragListener(GetDragComp(compName), UIEventKey, compName, parm, callback);
+            info.AddListener();
+            m_EndDragEvents.Add(info);
+        }
+
+        public void AddOnDragListener(string compName, InputEventHandle<InputUIOnDragEvent> callback, string parm = null)
+        {
+            InputEventRegisterInfo<InputUIOnDragEvent> info = InputUIEventProxy.GetOnDragListener(GetDragComp(compName), UIEventKey, compName, parm, callback);
+            info.AddListener();
+            m_DragEvents.Add(info);
+        }
+
+        public void AddEventListener(Enum EventEnum, EventHandle handle)
+        {
+            EventHandRegisterInfo info = new EventHandRegisterInfo();
+            info.m_EventKey = EventEnum;
+            info.m_hande = handle;
+
+            GlobalEvent.AddEvent(EventEnum, handle);
+
+            m_EventListeners.Add(info);
+        }
+
+        #endregion
+
+        #region 移除监听
+
+        //TODO 逐步添加所有的移除监听方法
+
+        public InputButtonClickRegisterInfo GetClickRegisterInfo(string buttonName, InputEventHandle<InputUIOnClickEvent> callback, string parm)
+        {
+            string eventKey = InputUIOnClickEvent.GetEventKey(UIEventKey, buttonName, parm);
+            for (int i = 0; i < m_OnClickEvents.Count; i++)
+            {
+                InputButtonClickRegisterInfo info = (InputButtonClickRegisterInfo)m_OnClickEvents[i];
+                if (info.eventKey == eventKey
+                    && info.callBack == callback)
+                {
+                    return info;
+                }
+            }
+
+            throw new Exception("GetClickRegisterInfo Exception not find RegisterInfo by " + buttonName + " parm " + parm);
+        }
+
+        public void RemoveOnClickListener(string buttonName, InputEventHandle<InputUIOnClickEvent> callback, string parm = null)
+        {
+            InputButtonClickRegisterInfo info = GetClickRegisterInfo(buttonName, callback, parm);
+            m_OnClickEvents.Remove(info);
+            info.RemoveListener();
+        }
+
+        public void RemoveLongPressListener(string compName, InputEventHandle<InputUILongPressEvent> callback, string parm = null)
+        {
+            InputEventRegisterInfo<InputUILongPressEvent> info = GetLongPressRegisterInfo(compName, callback, parm);
+            m_LongPressEvents.Remove(info);
+            info.RemoveListener();
+        }
+
+        public InputEventRegisterInfo<InputUILongPressEvent> GetLongPressRegisterInfo(string compName, InputEventHandle<InputUILongPressEvent> callback, string parm)
+        {
+            string eventKey = InputUILongPressEvent.GetEventKey(UIName, compName, parm);
+            for (int i = 0; i < m_LongPressEvents.Count; i++)
+            {
+                InputEventRegisterInfo<InputUILongPressEvent> info = (InputEventRegisterInfo<InputUILongPressEvent>)m_LongPressEvents[i];
+                if (info.eventKey == eventKey
+                    && info.callBack == callback)
+                {
+                    return info;
+                }
+            }
+
+            throw new Exception("GetLongPressRegisterInfo Exception not find RegisterInfo by " + compName + " parm " + parm);
+        }
+
+        #endregion
 
         #endregion
     }

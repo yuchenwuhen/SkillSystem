@@ -39,6 +39,10 @@ public class Test : MonoBehaviour,IPointerDownHandler
         {
             UIManager.CloseUIWindow<TestWindow>();
         }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            UIManager.OpenUIWindow<TestWindow>();
+        }
         //Debug.Log("测试" + Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 

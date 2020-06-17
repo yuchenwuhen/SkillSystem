@@ -22,7 +22,7 @@ namespace VFramework.Common
                     if (m_instance == null)
                     {
                         //new GameObject会执行Awake方法
-                        m_instance = new GameObject("Singleton of" + typeof(T)).AddComponent<T>();
+                        m_instance = new GameObject(typeof(T).ToString()).AddComponent<T>();
                     }
                     else
                     {

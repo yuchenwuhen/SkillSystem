@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VFramework.Common;
 
 namespace VFramework.UI
 {
@@ -103,13 +104,37 @@ namespace VFramework.UI
             gameObject.SetActive(false);
         }
 
+        public virtual IEnumerator EnterAnim(UIAnimCallBack animComplete, UICallBack callBack, params object[] objs)
+        {
+            //默认无动画
+            animComplete(this, callBack, objs);
+
+            yield break;
+        }
+
+        public virtual void OnCompleteEnterAnim()
+        {
+        }
+
+        public virtual IEnumerator ExitAnim(UIAnimCallBack animComplete, UICallBack callBack, params object[] objs)
+        {
+            //默认无动画
+            animComplete(this, callBack, objs);
+
+            yield break;
+        }
+
+        public virtual void OnCompleteExitAnim()
+        {
+        }
+
         #endregion
 
         #region 继承方法
 
         public override void RemoveAllListener()
         {
-
+            EventMgr.Instance.RemoveListener(this);
         }
 
         #endregion
