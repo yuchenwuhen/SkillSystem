@@ -110,6 +110,11 @@ namespace VFramework.UI
         Dictionary<string, Slider> m_Sliders = new Dictionary<string, Slider>();
         Dictionary<string, Toggle> m_Toggle = new Dictionary<string, Toggle>();
 
+        //Dictionary<string, UGUIJoyStick> m_joySticks = new Dictionary<string, UGUIJoyStick>();
+        //Dictionary<string, UGUIJoyStickBase> m_joySticks_ro = new Dictionary<string, UGUIJoyStickBase>();
+        Dictionary<string, LongPressAcceptor> m_longPressList = new Dictionary<string, LongPressAcceptor>();
+        Dictionary<string, DragAcceptor> m_dragList = new Dictionary<string, DragAcceptor>();
+
         /// <summary>
         /// 生成对象表，便于快速获取对象，并忽略层级
         /// </summary>
@@ -402,10 +407,50 @@ namespace VFramework.UI
 
         #endregion
 
+        #region 自定义组件
+
+
+        public LongPressAcceptor GetLongPressComp(string name)
+        {
+            if (m_longPressList.ContainsKey(name))
+            {
+                return m_longPressList[name];
+            }
+
+            LongPressAcceptor tmp = GetGameObject(name).GetComponent<LongPressAcceptor>();
+
+            if (tmp == null)
+            {
+                throw new Exception(m_EventNames + " GetLongPressComp ->" + name + "<- is Null !");
+            }
+
+            m_longPressList.Add(name, tmp);
+            return tmp;
+        }
+
+        public DragAcceptor GetDragComp(string name)
+        {
+            if (m_dragList.ContainsKey(name))
+            {
+                return m_dragList[name];
+            }
+
+            DragAcceptor tmp = GetGameObject(name).GetComponent<DragAcceptor>();
+
+            if (tmp == null)
+            {
+                throw new Exception(m_EventNames + " GetDragComp ->" + name + "<- is Null !");
+            }
+
+            m_dragList.Add(name, tmp);
+            return tmp;
+        }
+        #endregion
+
         #region 注册监听
 
         protected List<Enum> m_EventNames = new List<Enum>();
-        protected List<EventHandRegisterInfo> m_EventListeners = new List<EventHandRegisterInfo>();
+        //protected List<EventHandRegisterInfo> m_EventListeners = new List<EventHandRegisterInfo>();
 
         protected List<InputEventRegisterInfo> m_OnClickEvents = new List<InputEventRegisterInfo>();
         protected List<InputEventRegisterInfo> m_LongPressEvents = new List<InputEventRegisterInfo>();
@@ -415,11 +460,12 @@ namespace VFramework.UI
 
         public virtual void RemoveAllListener()
         {
-            for (int i = 0; i < m_EventListeners.Count; i++)
-            {
-                m_EventListeners[i].RemoveListener();
-            }
-            m_EventListeners.Clear();
+            //for (int i = 0; i < m_EventListeners.Count; i++)
+            //{
+            //    m_EventListeners[i].RemoveListener();
+            //}
+            //m_EventListeners.Clear();
+            EventMgr.Instance.RemoveListener(this);
 
             for (int i = 0; i < m_OnClickEvents.Count; i++)
             {
@@ -512,16 +558,16 @@ namespace VFramework.UI
             m_DragEvents.Add(info);
         }
 
-        public void AddEventListener(Enum EventEnum, EventHandle handle)
-        {
-            EventHandRegisterInfo info = new EventHandRegisterInfo();
-            info.m_EventKey = EventEnum;
-            info.m_hande = handle;
+        //public void AddEventListener(Enum EventEnum, EventHandle handle)
+        //{
+        //    EventHandRegisterInfo info = new EventHandRegisterInfo();
+        //    info.m_EventKey = EventEnum;
+        //    info.m_hande = handle;
 
-            GlobalEvent.AddEvent(EventEnum, handle);
+        //    GlobalEvent.AddEvent(EventEnum, handle);
 
-            m_EventListeners.Add(info);
-        }
+        //    m_EventListeners.Add(info);
+        //}
 
         #endregion
 
@@ -576,6 +622,8 @@ namespace VFramework.UI
         }
 
         #endregion
+
+
 
         #endregion
     }
