@@ -5,7 +5,7 @@ using System;
 
 namespace VFramework.Common
 {
-    public class InputMessageManager : MonoBehaviour
+    public class InputMessageManager
     {
         static Dictionary<string, IInputDispatcher> s_dispatcher = new Dictionary<string, IInputDispatcher>();
 
@@ -54,7 +54,7 @@ namespace VFramework.Common
                 throw new Exception(DispatcherName + " Dispatcher has exist!");
             }
 
-            Type typeArgument = Type.GetType(DispatcherName);
+            Type typeArgument = Type.GetType("VFramework.Common."+DispatcherName);
             if (typeArgument == null)
             {
                 throw new Exception(DispatcherName + " is not dont have class!");
@@ -144,7 +144,7 @@ namespace VFramework.Common
 
         public static void Dispatch(string eventName, IInputEventBase inputEvent)
         {
-            IInputDispatcher dispatcher = GetDispatcher(eventName);
+            IInputDispatcher dispatcher = GetDispatcher("VFramework.Common." + eventName);
             dispatcher.Dispatch(inputEvent);
         }
 

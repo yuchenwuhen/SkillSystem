@@ -22,15 +22,6 @@ public class Test : MonoBehaviour,IPointerDownHandler
         UIManager.OpenUIWindow<TestWindow>();
     }
 
-    void TestC(PointerEventData pointEventData)
-    {
-        Debug.Log("CC");
-    }
-
-    void TestB(PointerEventData pointEventData)
-    {
-        Debug.Log("DD");
-    }
 
     // Update is called once per frame
     void Update()

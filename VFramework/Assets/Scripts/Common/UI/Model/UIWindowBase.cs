@@ -15,6 +15,9 @@ namespace VFramework.UI
 
         public UIType m_UIType;
 
+        public GameObject m_bgMask;
+        public GameObject m_uiRoot;
+
         public float m_PosZ; //Z轴偏移
 
         #region 初始化

@@ -5,7 +5,7 @@ using System;
 
 namespace VFramework.Common
 {
-    public abstract class IInputDispatcher : MonoBehaviour
+    public abstract class IInputDispatcher
     {
         public InputEventCallBack m_OnAllEventDispatch;
 
