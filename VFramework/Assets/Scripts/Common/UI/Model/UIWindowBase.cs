@@ -137,7 +137,7 @@ namespace VFramework.UI
 
         public override void RemoveAllListener()
         {
-            EventMgr.Instance.RemoveListener(this);
+            base.RemoveAllListener();
         }
 
         #endregion

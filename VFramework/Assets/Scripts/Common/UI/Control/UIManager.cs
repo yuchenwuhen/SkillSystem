@@ -420,7 +420,7 @@ namespace VFramework.UI
                 List<UIWindowBase> list = showUIList[keys[i]];
                 for (int j = 0; j < list.Count; j++)
                 {
-                    CloseUIWindow(list[i], isPlayerAnim);
+                    CloseUIWindow(list[j], isPlayerAnim);
                 }
             }
         }

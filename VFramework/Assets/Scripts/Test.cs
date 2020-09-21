@@ -14,26 +14,34 @@ public class Test : MonoBehaviour,IPointerDownHandler
     //PointerEventHandler
     void Awake()
     {
-        UIManager.Init();
+        //UIManager.Init();
     }
     // Start is called before the first frame update
     void Start()
     {
-        UIManager.OpenUIWindow<TestWindow>();
+        //UIManager.OpenUIWindow<TestWindow>();
+
+        //GameObject cc = Instantiate( Resources.Load<GameObject>("Audio/Cube"));
+        //GameObject cc = Instantiate( Resources.Load<GameObject>("audio/cube"));
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
+        Debug.Log("测试");
+        if (Input.GetKey(KeyCode.A))
         {
-            UIManager.CloseUIWindow<TestWindow>();
+            Debug.Log("anjian");
         }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            UIManager.OpenUIWindow<TestWindow>();
-        }
+        //if (Input.GetKeyDown(KeyCode.A))
+        //{
+        //    UIManager.CloseUIWindow<TestWindow>();
+        //}
+        //if (Input.GetKeyDown(KeyCode.B))
+        //{
+        //    UIManager.OpenUIWindow<TestWindow>();
+        //}
         //Debug.Log("测试" + Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 

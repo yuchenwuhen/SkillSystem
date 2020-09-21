@@ -32,10 +32,28 @@ namespace VFramework.Common
         /// <param name="currentTF"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static GameObject FindChildByName(this GameObject currentTF, string name)
+        public static GameObject FindChildByName(this GameObject currentTF, string childName)
         {
-            Transform go = currentTF.transform.FindChildByName(name);
-            return go != null ? go.gameObject : null;
+            if (currentTF.name == childName)
+            {
+                return currentTF;
+            }
+            if (currentTF.transform.childCount < 1)
+            {
+                return null;
+            }
+            GameObject obj = null;
+            for (int i = 0; i < currentTF.transform.childCount; i++)
+            {
+                GameObject go = currentTF.transform.GetChild(i).gameObject;
+                obj = FindChildByName(go, childName);
+                if (obj != null)
+                {
+                    break;
+                }
+            }
+
+            return obj;
         }
 
         /// <summary>

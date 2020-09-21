@@ -50,6 +50,53 @@ namespace VFramework.Common
             return go;
         }
 
+        public GameObject CreateObject(string key)
+        {
+            GameObject go = FindUsableObject(key);
+
+            if (go == null)
+            {
+                go = AddObject(key);
+            }
+
+
+            if (go == null)
+            {
+                Debug.LogError("GameObjectPool 加载失败：" + name);
+                return go;
+            }
+
+            AssetsUnloadHandler.MarkUseAssets(name);
+
+            UseObject(go);
+
+            return go;
+        }
+
+        public GameObject CreateObject(GameObject prefab)
+        {
+            if (prefab != null)
+            {
+                return CreateObject(prefab.name);
+            }
+
+            Debug.LogError("prefab == null");
+            return null;
+        }
+
+        private void UseObject( GameObject go)
+        {
+            go.transform.localPosition = Vector3.zero;
+            go.transform.rotation = Quaternion.identity;
+            go.SetActive(true);
+
+            var resetScript = go.GetComponent<IResetable>();
+            if (resetScript != null)
+            {
+                resetScript.OnReset();
+            }
+        }
+
         private void UseObject(Vector3 position, Quaternion rotation, GameObject go)
         {
             go.transform.position = position;

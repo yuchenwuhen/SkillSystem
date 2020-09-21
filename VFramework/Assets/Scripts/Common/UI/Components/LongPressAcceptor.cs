@@ -41,6 +41,7 @@ namespace VFramework.UI
         public void OnPointerDown(PointerEventData eventData)
         {
             isPress = true;
+            m_Timer = 0;
 
             if (OnLongPress != null)
             {

@@ -8,11 +8,30 @@ using VFramework.UI;
 public class TestWindow : UIWindowBase
 {
 
-    public Button button;
     public override void OnOpen()
     {
         AddOnClickListener("Button", OnClickReturnMainMenu);
-        //GetGameObject("Button").GetComponent<Button>().onClick.AddListener(OnClickReturnMainMenu);
+        AddBeginDragListener("Drag", OnBeginDrag);
+        AddOnDragListener("Drag", OnDrag);
+        AddEndDragListener("Drag", OnEndDrag);
+
+        AddLongPressListener("LongPress", OnLongPress);
+
+        EventMgr.Instance.AddListener("UIEvent", OnUIEvent);
+
+        //GetJoyStick("JoyStick").onJoyStick += Joy;
+
+        GetReusingScrollRect("ScrollRect").SetItem("Image_item");
+        GetReusingScrollRect("ScrollRect").Init(UIEventKey, 0);
+
+        List<Dictionary<string, object>> data = new List<Dictionary<string, object>>();
+
+        for (int i = 0; i < 100; i++)
+        {
+            data.Add(new Dictionary<string, object>());
+        }
+
+        GetReusingScrollRect("ScrollRect").SetData(data);
     }
 
     public override void OnInit()
@@ -23,6 +42,21 @@ public class TestWindow : UIWindowBase
         {
             graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, 0);
         }
+    }
+
+    private void Joy(Vector3 dir)
+    {
+        Debug.Log("方向" + dir);
+    }
+
+    public override void OnRefresh()
+    {
+        base.OnRefresh();
+    }
+
+    void OnUIEvent(string str)
+    {
+        Debug.Log("Test UI Event");
     }
 
     public override IEnumerator EnterAnim(UIAnimCallBack animComplete, UICallBack callBack, params object[] objs)
@@ -54,5 +88,26 @@ public class TestWindow : UIWindowBase
     void OnClickReturnMainMenu(InputUIOnClickEvent e)
     {
         Debug.Log("回到主场景....");
+        EventMgr.Instance.TriggerEvent("UIEvent");
+    }
+
+    void OnBeginDrag(InputUIOnBeginDragEvent e)
+    {
+        Debug.Log("开始拖拽...." + e.m_dragPosition);
+    }
+
+    void OnDrag(InputUIOnDragEvent e)
+    {
+        Debug.Log("拖拽中...." + e.m_dragPosition);
+    }
+
+    void OnEndDrag(InputUIOnEndDragEvent e)
+    {
+        Debug.Log("结束拖拽...." + e.m_dragPosition);
+    }
+
+    void OnLongPress(InputUILongPressEvent e)
+    {
+        Debug.Log("长按...." + e.m_type+":" +e.m_t);
     }
 }

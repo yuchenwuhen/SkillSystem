@@ -109,11 +109,14 @@ namespace VFramework.UI
         Dictionary<string, InputField> m_inputFields = new Dictionary<string, InputField>();
         Dictionary<string, Slider> m_Sliders = new Dictionary<string, Slider>();
         Dictionary<string, Toggle> m_Toggle = new Dictionary<string, Toggle>();
+        Dictionary<string, ReusingScrollRect> m_reusingScrollRects = new Dictionary<string, ReusingScrollRect>();
 
         //Dictionary<string, UGUIJoyStick> m_joySticks = new Dictionary<string, UGUIJoyStick>();
         //Dictionary<string, UGUIJoyStickBase> m_joySticks_ro = new Dictionary<string, UGUIJoyStickBase>();
         Dictionary<string, LongPressAcceptor> m_longPressList = new Dictionary<string, LongPressAcceptor>();
         Dictionary<string, DragAcceptor> m_dragList = new Dictionary<string, DragAcceptor>();
+        Dictionary<string, UGUIJoyStick> m_joySticks = new Dictionary<string, UGUIJoyStick>();
+        Dictionary<string, UGUIJoyStickBase> m_joySticks_ro = new Dictionary<string, UGUIJoyStickBase>();
 
         /// <summary>
         /// 生成对象表，便于快速获取对象，并忽略层级
@@ -132,10 +135,13 @@ namespace VFramework.UI
             m_textmeshs.Clear();
             m_buttons.Clear();
             m_scrollRects.Clear();
+            m_reusingScrollRects.Clear();
             m_rawImages.Clear();
             m_rectTransforms.Clear();
             m_inputFields.Clear();
             m_Sliders.Clear();
+            m_joySticks.Clear();
+            m_joySticks_ro.Clear();
 
             m_childUIList.Clear();
 
@@ -356,6 +362,21 @@ namespace VFramework.UI
             return tmp;
         }
 
+        private RectTransform m_rectTransform;
+        public RectTransform RectTransform
+        {
+            get
+            {
+                if (m_rectTransform == null)
+                {
+                    m_rectTransform = GetComponent<RectTransform>();
+                }
+
+                return m_rectTransform;
+            }
+            set { m_rectTransform = value; }
+        }
+
         public RectTransform GetRectTransform(string name)
         {
             if (m_rectTransforms.ContainsKey(name))
@@ -409,6 +430,23 @@ namespace VFramework.UI
 
         #region 自定义组件
 
+        public ReusingScrollRect GetReusingScrollRect(string name)
+        {
+            if (m_reusingScrollRects.ContainsKey(name))
+            {
+                return m_reusingScrollRects[name];
+            }
+
+            ReusingScrollRect tmp = GetGameObject(name).GetComponent<ReusingScrollRect>();
+
+            if (tmp == null)
+            {
+                throw new Exception(m_EventNames + " GetReusingScrollRect ->" + name + "<- is Null !");
+            }
+
+            m_reusingScrollRects.Add(name, tmp);
+            return tmp;
+        }
 
         public LongPressAcceptor GetLongPressComp(string name)
         {
@@ -445,6 +483,44 @@ namespace VFramework.UI
             m_dragList.Add(name, tmp);
             return tmp;
         }
+
+
+        public UGUIJoyStick GetJoyStick(string name)
+        {
+            if (m_joySticks.ContainsKey(name))
+            {
+                return m_joySticks[name];
+            }
+
+            UGUIJoyStick tmp = GetGameObject(name).GetComponent<UGUIJoyStick>();
+
+            if (tmp == null)
+            {
+                throw new Exception(m_EventNames + " GetJoyStick ->" + name + "<- is Null !");
+            }
+
+            m_joySticks.Add(name, tmp);
+            return tmp;
+        }
+
+        public UGUIJoyStickBase GetJoyStick_ro(string name)
+        {
+            if (m_joySticks_ro.ContainsKey(name))
+            {
+                return m_joySticks_ro[name];
+            }
+
+            UGUIJoyStickBase tmp = GetGameObject(name).GetComponent<UGUIJoyStickBase>();
+
+            if (tmp == null)
+            {
+                throw new Exception(m_EventNames + " GetJoyStick_ro ->" + name + "<- is Null !");
+            }
+
+            m_joySticks_ro.Add(name, tmp);
+            return tmp;
+        }
+
         #endregion
 
         #region 注册监听
