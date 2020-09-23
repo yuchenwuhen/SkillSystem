@@ -7,6 +7,7 @@ namespace VFramework.UI
 {
     public class UIWindowBase : UIBase
     {
+
         [HideInInspector]
         public string cameraKey;
 
@@ -14,9 +15,6 @@ namespace VFramework.UI
         public WindowStatus windowStatus;
 
         public UIType m_UIType;
-
-        public GameObject m_bgMask;
-        public GameObject m_uiRoot;
 
         public float m_PosZ; //Z轴偏移
 
@@ -29,7 +27,7 @@ namespace VFramework.UI
             InitChildUI(null, this, id, list);
         }
 
-        public void InitChildUI(UIBase parentUI,UIBase uiBase,int id, List<UILifeCycleInterface> UIList)
+        public void InitChildUI(UIBase parentUI, UIBase uiBase, int id, List<UILifeCycleInterface> UIList)
         {
             int childIndex = 0;
             for (int i = 0; i < uiBase.m_childUIList.Count; i++)
@@ -75,27 +73,27 @@ namespace VFramework.UI
         /// <summary>
         /// 打开UI
         /// </summary>
-        public virtual void OnOpen(){}
+        public virtual void OnOpen(params object[] args) { }
 
         /// <summary>
         /// 关闭UI
         /// </summary>
-        public virtual void OnClose(){}
+        public virtual void OnClose() { }
 
         /// <summary>
         /// 隐藏UI
         /// </summary>
-        public virtual void OnHide(){}
+        public virtual void OnHide() { }
 
         /// <summary>
         /// 显示UI
         /// </summary>
-        public virtual void OnShow(){}
+        public virtual void OnShow() { }
 
         /// <summary>
         /// 刷新UI，需注册消息
         /// </summary>
-        public virtual void OnRefresh(){}
+        public virtual void OnRefresh() { }
 
         public virtual void Show()
         {

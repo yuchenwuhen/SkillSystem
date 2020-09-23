@@ -14,11 +14,16 @@ anim_hit	character/anim_hit
 anim_idle	character/anim_idle
 anim_prepare	character/anim_prepare
 anim_run	character/anim_run
+frictionless	physic material/frictionless
+ground	physic material/ground
+player 1	prefab/character/player 1
 basemeleeskill	skill/basemeleeskill
 attackaround	sprite/player/attackaround
 newattack	sprite/player/newattack
 newwalk	sprite/player/newwalk
 image_item	ui/image_item
+lobbywindow	ui/lobbywindow
+loginwindow	ui/loginwindow
 testwindow	ui/testwindow
 uimanager	ui/uimanager
 resourcesmanifest	resourcesmanifest

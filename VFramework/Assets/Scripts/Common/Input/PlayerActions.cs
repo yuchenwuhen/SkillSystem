@@ -21,6 +21,14 @@
         public PlayerAction MouseDown;
         public PlayerTwoAxisAction MouseMove;
 
+        public PlayerAction Left3D;
+        public PlayerAction Right3D;
+        public PlayerAction Front3D;
+        public PlayerAction Back3D;
+        public PlayerTwoAxisAction Move3D;
+
+        public PlayerAction Jump;
+
 
         public PlayerActions()
 		{
@@ -38,6 +46,14 @@
             MouseUp = CreatePlayerAction("Mouse Up");
             MouseDown = CreatePlayerAction("Mouse Down");
             MouseMove = CreateTwoAxisPlayerAction(MouseLeft, MouseRight, MouseDown, MouseUp);
+
+            Left3D = CreatePlayerAction("Move Left 3D");
+            Right3D = CreatePlayerAction("Move Right 3D");
+            Front3D = CreatePlayerAction("Move Up 3D");
+            Back3D = CreatePlayerAction("Move Down 3D");
+            Move3D = CreateTwoAxisPlayerAction(Left3D, Right3D, Front3D, Back3D);
+
+            Jump =  CreatePlayerAction("Jump");
         }
 
 
@@ -82,7 +98,19 @@
 			playerActions.Up.AddDefaultBinding( InputControlType.DPadUp );
 			playerActions.Down.AddDefaultBinding( InputControlType.DPadDown );
 
-			playerActions.ListenOptions.IncludeUnknownControllers = true;
+            playerActions.Left3D.AddDefaultBinding(InputControlType.DPadLeft);
+            playerActions.Left3D.AddDefaultBinding(Key.A);
+            playerActions.Right3D.AddDefaultBinding(InputControlType.DPadRight);
+            playerActions.Right3D.AddDefaultBinding(Key.D);
+            playerActions.Front3D.AddDefaultBinding(InputControlType.DPadUp);
+            playerActions.Front3D.AddDefaultBinding(Key.W);
+            playerActions.Back3D.AddDefaultBinding(InputControlType.DPadDown);
+            playerActions.Back3D.AddDefaultBinding(Key.S);
+
+            playerActions.Jump.AddDefaultBinding(Key.Space);
+            playerActions.Jump.AddDefaultBinding(InputControlType.Action1);
+
+            playerActions.ListenOptions.IncludeUnknownControllers = true;
 			playerActions.ListenOptions.MaxAllowedBindings = 4;
 			//playerActions.ListenOptions.MaxAllowedBindingsPerType = 1;
 			//playerActions.ListenOptions.AllowDuplicateBindingsPerSet = true;

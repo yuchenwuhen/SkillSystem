@@ -12,8 +12,6 @@ namespace VFramework.UI
     /// </summary>
     public class UIBase : MonoBehaviour,UILifeCycleInterface
     {
-
-
         #region 重载方法
 
         /// <summary>
@@ -87,7 +85,7 @@ namespace VFramework.UI
 
         public void Dispose()
         {
-            
+
         }
 
         #endregion
@@ -426,6 +424,12 @@ namespace VFramework.UI
             m_lifeComponent.Clear();
         }
 
+        public virtual void OnDestroy()
+        {
+            OnUIDestroy();
+            EventMgr.Instance.RemoveListener(this);
+        }
+
         #endregion
 
         #region 自定义组件
@@ -541,7 +545,7 @@ namespace VFramework.UI
             //    m_EventListeners[i].RemoveListener();
             //}
             //m_EventListeners.Clear();
-            EventMgr.Instance.RemoveListener(this);
+            //CoreRoot.eventMgr.RemoveListener(this);
 
             for (int i = 0; i < m_OnClickEvents.Count; i++)
             {

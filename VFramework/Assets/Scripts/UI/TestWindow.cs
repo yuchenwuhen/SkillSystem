@@ -8,7 +8,7 @@ using VFramework.UI;
 public class TestWindow : UIWindowBase
 {
 
-    public override void OnOpen()
+    public override void OnOpen(object[] args)
     {
         AddOnClickListener("Button", OnClickReturnMainMenu);
         AddBeginDragListener("Drag", OnBeginDrag);

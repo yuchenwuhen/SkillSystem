@@ -8,16 +8,8 @@ namespace VFramework.Character
 {
     public abstract class CharacterMoveBase : MonoBehaviour
     {
-        public enum MoveType
-        {
-            Move2D,
-            Move3D
-        }
 
         #region 参数 
-
-        [SerializeField]
-        private MoveType m_moveType = MoveType.Move2D;
 
         private bool m_enable = true;
         /// <summary>
@@ -74,6 +66,14 @@ namespace VFramework.Character
         protected virtual void Clear()
         {
 
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            if (!Enable)
+            {
+                return;
+            }
         }
 
         protected virtual void Update()

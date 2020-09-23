@@ -20,14 +20,14 @@ namespace VFramework.Character
 
         private CharacterSkillSystem m_skillSystem;
 
-        private CharacterMoveBase m_characterMove;
+        private Character2DMove m_characterMove;
 
         private AutoCam m_autoCam;
 
         private void Awake()
         {
             m_skillSystem = this.GetComponent<CharacterSkillSystem>();
-            m_characterMove = this.GetComponent<CharacterMoveBase>();
+            m_characterMove = this.GetComponent<Character2DMove>();
             m_autoCam = Camera.main.GetComponent<AutoCam>();
         }
 
