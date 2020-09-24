@@ -1,11 +1,11 @@
 ﻿using Photon.Pun;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using VFramework.UI;
 using VFramework.Common;
 using Photon.Realtime;
+using ExitGames.Client.Photon;
 
 public class LobbyWindow : UIWindowBase
 {
@@ -59,8 +59,9 @@ public class LobbyWindow : UIWindowBase
         AddOnClickListener("CancelButton", OnBackButtonClicked);
 
         EventMgr.Instance.AddListener(GlobalEvent.CreateRoomFail,BackToSelectPanel);
-        EventMgr.Instance.AddListener(GlobalEvent.CreateRoomSuccess,BackToSelectPanel);
+        EventMgr.Instance.AddListener(GlobalEvent.CreateRoomSuccess, Net_OnCreateRoomSuccess);
         EventMgr.Instance.AddListener(GlobalEvent.ReadyUpdate, LocalPlayerPropertiesUpdated);
+        EventMgr.Instance.AddListener<Player, Hashtable>(GlobalEvent.PlayerPropertiesUpdate,PlayerPropertiesUpdate);
     }
 
     private void Update()
@@ -183,6 +184,30 @@ public class LobbyWindow : UIWindowBase
 
     public void LocalPlayerPropertiesUpdated()
     {
+        m_startGameButton.gameObject.SetActive(CheckPlayersReady());
+    }
+
+    #endregion
+
+    #region 属性更新
+
+    void PlayerPropertiesUpdate(string e,Player targetPlayer, Hashtable changedProps)
+    {
+        if (m_playerListEntries == null)
+        {
+            m_playerListEntries = new Dictionary<int, GameObject>();
+        }
+
+        GameObject entry;
+        if (m_playerListEntries.TryGetValue(targetPlayer.ActorNumber, out entry))
+        {
+            object isPlayerReady;
+            if (changedProps.TryGetValue(GlobalDef.PLAYER_READY, out isPlayerReady))
+            {
+                entry.GetComponent<PlayerListEntryItem>().SetPlayerReady((bool)isPlayerReady);
+            }
+        }
+
         m_startGameButton.gameObject.SetActive(CheckPlayersReady());
     }
 

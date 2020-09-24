@@ -58,6 +58,11 @@ public class PlayerListEntryItem : MonoBehaviour
         PlayerNumbering.OnPlayerNumberingChanged -= OnPlayerNumberingChanged;
     }
 
+    private void OnDestroy()
+    {
+        PlayerReadyButton.onClick.RemoveAllListeners();
+    }
+
     #endregion
 
     public void Initialize(int playerId, string playerName)

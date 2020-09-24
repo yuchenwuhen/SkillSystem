@@ -19,6 +19,11 @@ public class GlobalEvent
 
     public const string ReadyUpdate = "ReadyUpdate";
 
+    /// <summary>
+    /// 属性更新
+    /// </summary>
+    public const string PlayerPropertiesUpdate = "PlayerPropertiesUpdate";
+
     #endregion
 
 }

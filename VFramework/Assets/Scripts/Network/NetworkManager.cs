@@ -6,6 +6,7 @@ using VFramework.UI;
 using VFramework.Common;
 using Photon.Realtime;
 using Photon.Pun.Demo.Asteroids;
+using ExitGames.Client.Photon;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -52,6 +53,19 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         EventMgr.Instance.TriggerEvent(GlobalEvent.CreateRoomFail);
     }
+
+    /// <summary>
+    /// 属性更新
+    /// </summary>
+    /// <param name="targetPlayer"></param>
+    /// <param name="changedProps"></param>
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+
+        EventMgr.Instance.TriggerEvent<Player, ExitGames.Client.Photon.Hashtable>(GlobalEvent.PlayerPropertiesUpdate, targetPlayer, changedProps);
+        
+    }
+
 
     #endregion
 
