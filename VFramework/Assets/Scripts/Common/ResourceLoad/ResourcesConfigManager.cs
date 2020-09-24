@@ -33,9 +33,9 @@ namespace VFramework.Common
         /// </summary>
         /// <param name="bundleName"></param>
         /// <returns></returns>
-        public static string GetLoadPath(AssetsLoadType assetsLoadType,string name)
+        public static string GetLoadPath(AssetsLoadType assetsLoadType, string path)
         {
-            string path = GetResourcePath(name);
+            //string path = GetResourcePath(name);
             if (assetsLoadType == AssetsLoadType.Resources)
                 return path;
             else

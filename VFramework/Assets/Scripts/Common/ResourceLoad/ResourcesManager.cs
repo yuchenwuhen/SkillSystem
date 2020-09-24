@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace VFramework.Common
 {
-    public static class ResourcesManager
+    public class ResourcesManager
     {
         private static AssetsLoadType m_loadType = AssetsLoadType.Resources;
         public static AssetsLoadType LoadType { get { return m_loadType; } }
@@ -14,27 +14,22 @@ namespace VFramework.Common
             get; private set;
         }
 
-        private static AssetsLoadController loadAssetsController;
+        private static bool s_isInit = false;
 
-#if UNITY_EDITOR
-        //UnityEditor模式下编译完成后自动初始化
-        [UnityEditor.InitializeOnLoadMethod]
-#endif
-        private static void Initialize()
-        {
-            Initialize(AssetsLoadType.Resources, false);
-        }
+        private static AssetsLoadController loadAssetsController;
 
         /// <summary>
         /// 初始化
         /// </summary>
         /// <param name="loadType"></param>
         /// <param name="useCache"></param>
-        public static void Initialize(AssetsLoadType loadType, bool useCache)
+        public static void Init(AssetsLoadType loadType, bool useCache)
         {
-            //if (isInit)
-            //    return;
 
+            if (s_isInit)
+                return;
+
+            s_isInit = true;
 
             if (loadType == AssetsLoadType.AssetBundle)
             {
@@ -50,7 +45,7 @@ namespace VFramework.Common
             //GameInfoCollecter.AddAppInfoValue("AssetsLoadType", loadType);
 
             loadAssetsController = new AssetsLoadController(loadType, useCache);
-            //Debug.Log("ResourceManager初始化 AssetsLoadType:" + loadType + " useCache:" + useCache);
+            //Debug.LogError("ResourceManager初始化 AssetsLoadType:" + loadType + " useCache:" + useCache + loadAssetsController==null);
         }
 
         /// <summary>
@@ -62,11 +57,13 @@ namespace VFramework.Common
         /// <returns></returns>
         public static T Load<T>(string name) where T : Object
         {
+            Init(AssetsLoadType.Resources, false);
+
             T res = null;
             string path = ResourcesConfigManager.GetLoadPath(m_loadType, name);
 
             AssetsData assets = loadAssetsController.LoadAssets<T>(path);
-            Debug.Log(assets.assetName +":"+ assets.GetObjectsMemorySize());
+
             if (assets != null)
             {
                 res = assets.GetAssets<T>();
@@ -96,8 +93,8 @@ namespace VFramework.Common
 
         public static void DestoryAssetsCounter(string name, int times = 1)
         {
-            if (!ResourcesConfigManager.GetIsExitRes(name))
-                return;
+            //if (!ResourcesConfigManager.GetIsExitRes(name))
+            //    return;
             string path = ResourcesConfigManager.GetLoadPath(m_loadType, name);
             if (times <= 0)
                 times = 1;

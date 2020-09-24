@@ -17,7 +17,27 @@ namespace VFramework.UI
     {
 
         private static GameObject s_uiManagerGo;
-        
+
+        [SerializeField]
+        private static Camera m_uiCamera;
+        public static Camera UiCamera
+        {
+            get
+            {
+                return m_uiCamera;
+            }
+        }
+
+        [SerializeField]
+        private static Canvas m_uiCanvas;
+        public static Canvas UICanvas
+        {
+            get
+            {
+                return m_uiCanvas;
+            }
+        }
+
         /// <summary>
         /// UI层级管理器
         /// </summary>
@@ -58,8 +78,11 @@ namespace VFramework.UI
 
                 if (instance == null)
                 {
-                    instance = GameObjectPool.Instance.CreateGameObjectByPool("UIManager", Vector3.zero, Quaternion.identity);
+                    instance = GameObjectPool.Instance.CreateObject("UI/UIManager", Vector3.zero, Quaternion.identity);
                 }
+
+                m_uiCamera = instance.GetComponentInChildren<Camera>();
+                m_uiCanvas = instance.GetComponentInChildren<Canvas>();
 
                 s_uiManagerGo = instance;
 
@@ -193,9 +216,9 @@ namespace VFramework.UI
 
         public static UIWindowBase CreateUIWindow(string UIName)
         {
-            Debug.Log("CreateUIWindow " + UIName);
+            //Debug.Log("CreateUIWindow " + UIName);
 
-            GameObject UItmp = GameObjectPool.Instance.CreateGameObjectByPool(UIName,Vector3.zero,Quaternion.identity, UIManagerGo);
+            GameObject UItmp = GameObjectPool.Instance.CreateObject("UI/" + UIName, Vector3.zero, Quaternion.identity, UIManagerGo);
             UIWindowBase UIWIndowBase = UItmp.GetComponent<UIWindowBase>();
 
             UIWIndowBase.windowStatus = UIWindowBase.WindowStatus.Create;
@@ -225,6 +248,7 @@ namespace VFramework.UI
         /// <returns>返回打开的UI</returns>
         public static UIWindowBase OpenUIWindow(string UIName, UICallBack callback = null, params object[] objs)
         {
+
             UIWindowBase UIbase = GetHideUI(UIName);
 
             if (UIbase == null)
@@ -243,7 +267,7 @@ namespace VFramework.UI
             UISystemEvent.Dispatch(UIbase, UIEvent.OnOpen);  //派发OnOpen事件
             try
             {
-                UIbase.OnOpen();
+                UIbase.OnOpen(objs);
             }
             catch (Exception e)
             {
@@ -252,7 +276,7 @@ namespace VFramework.UI
 
             UISystemEvent.Dispatch(UIbase, UIEvent.OnOpened);  //派发OnOpened事件
 
-            UIAnimManager.StartEnterAnim(UIbase, callback, objs); //播放动画
+            UIAnimManager.StartEnterAnim(UIbase, callback); //播放动画
             return UIbase;
         }
 

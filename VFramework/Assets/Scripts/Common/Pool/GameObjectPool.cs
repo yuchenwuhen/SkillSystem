@@ -36,16 +36,19 @@ namespace VFramework.Common
                 go = AddObject(key);
             }
 
-
-            if (go == null)
-            {
-                Debug.LogError("GameObjectPool 加载失败：" + name);
-                return go;
-            }
-
-            AssetsUnloadHandler.MarkUseAssets(name);
-
             UseObject(position, rotation, go);
+
+            return go;
+        }
+
+        public GameObject CreateObject(string key, Vector3 position, Quaternion rotation, GameObject parent)
+        {
+            GameObject go = CreateObject(key, position, rotation);
+
+            if (go != null && parent != null)
+            {
+                go.transform.SetParent(parent.transform);
+            }
 
             return go;
         }
@@ -59,15 +62,6 @@ namespace VFramework.Common
                 go = AddObject(key);
             }
 
-
-            if (go == null)
-            {
-                Debug.LogError("GameObjectPool 加载失败：" + name);
-                return go;
-            }
-
-            AssetsUnloadHandler.MarkUseAssets(name);
-
             UseObject(go);
 
             return go;
@@ -75,19 +69,13 @@ namespace VFramework.Common
 
         public GameObject CreateObject(GameObject prefab)
         {
-            if (prefab != null)
-            {
-                return CreateObject(prefab.name);
-            }
-
-            Debug.LogError("prefab == null");
-            return null;
+            return CreateObject(prefab.name);
         }
 
-        private void UseObject( GameObject go)
+        private void UseObject(Vector3 position, Quaternion rotation, GameObject go)
         {
-            go.transform.localPosition = Vector3.zero;
-            go.transform.rotation = Quaternion.identity;
+            go.transform.position = position;
+            go.transform.rotation = rotation;
             go.SetActive(true);
 
             var resetScript = go.GetComponent<IResetable>();
@@ -97,10 +85,9 @@ namespace VFramework.Common
             }
         }
 
-        private void UseObject(Vector3 position, Quaternion rotation, GameObject go)
+        private void UseObject(GameObject go)
         {
-            go.transform.position = position;
-            go.transform.rotation = rotation;
+            go.transform.rotation = Quaternion.identity;
             go.SetActive(true);
 
             var resetScript = go.GetComponent<IResetable>();
@@ -118,7 +105,12 @@ namespace VFramework.Common
                 Debug.LogError("cant load resource " + key);
             }
             GameObject go = GameObject.Instantiate(prefab);
-            go.name = prefab.name;
+            go.name = go.name.Replace("(Clone)", "");
+
+            if (!go.GetComponent<PrefabData>())
+            {
+                go.AddComponent<PrefabData>().pathName = key;
+            }
             //if (!m_cacheList.ContainsKey(key))
             //{
             //    m_cacheList.Add(key, new List<GameObject>());
@@ -144,58 +136,6 @@ namespace VFramework.Common
         }
 
         /// <summary>
-        /// 创建物体（parent不为null时，position为本地坐标）
-        /// </summary>
-        /// <param name="objName"></param>
-        /// <param name="position"></param>
-        /// <param name="rotation"></param>
-        /// <param name="prefab"></param>
-        /// <param name="parent"></param>
-        /// <param name="isSetActive"></param>
-        /// <returns></returns>
-        private GameObject CreateObject(string objName, Vector3 position, Quaternion rotation, GameObject prefab, GameObject parent = null, bool isSetActive = true)
-        {
-            GameObject go = null;
-            string name = objName;
-            if (string.IsNullOrEmpty(name))
-            {
-                name = prefab.name;
-            }
-
-            go = CreateObject(name, position,rotation);
-
-            if (isSetActive)
-                go.SetActive(true);
-
-            if (parent == null)
-            {
-                go.transform.SetParent(null);
-            }
-            else
-            {
-                go.transform.SetParent(parent.transform);
-                go.transform.position = position;
-            }
-            return go;
-        }
-
-        /// <summary>
-        /// 从对象池取出一个对象，如果没有，则直接创建它
-        /// </summary>
-        /// <param name="name">对象名</param>
-        /// <param name="parent">要创建到的父节点</param>
-        /// <returns>返回这个对象</returns>
-        public GameObject CreateGameObjectByPool(string name,Vector3 position, Quaternion rotation, GameObject prefab, GameObject parent, bool isSetActive = true)
-        {
-            return CreateObject(name, position, rotation, prefab, parent, isSetActive);
-        }
-
-        public GameObject CreateGameObjectByPool(string name, Vector3 position, Quaternion rotation, GameObject parent = null, bool isSetActive = true)
-        {
-            return CreateObject(name, position, rotation, null, parent, isSetActive);
-        }
-
-        /// <summary>
         /// 回收对象
         /// 因为resources目录索引是prefab name并且唯一,所以根据GameObject来判断
         /// </summary>
@@ -208,23 +148,73 @@ namespace VFramework.Common
                 return;
             }
 
-            StartCoroutine(DelayCollect(go, delay));
+            // StartCoroutine(DelayCollect(go, delay));
+            DelayCollect(go);
+        }
+
+        private void DelayCollect(GameObject go)
+        {
+
+            //go 名字一般为xx(Clone);
+            var data = go.GetComponent<PrefabData>();
+            if (data == null)
+            {
+                Debug.LogError("can't collect obj, missing PrefabData component" + go.name);
+            }
+
+            string key = data.pathName;
+            if (m_cacheList.ContainsKey(key))
+            {
+                if (m_cacheList[key].Contains(go))
+                {
+                    Debug.LogError("collect repeat" + go.name);
+                }
+                else
+                {
+                    m_cacheList[key].Add(go);
+                }
+            }
+            else
+            {
+                m_cacheList.Add(key, new List<GameObject>());
+                m_cacheList[key].Add(go);
+            }
+
+            //重设父节点 防止被删除
+            go.transform.SetParent(null);
+            go.SetActive(false);
         }
 
         private IEnumerator DelayCollect(GameObject go, float delay)
         {
             yield return new WaitForSeconds(delay);
-            //go 名字一般为xx(clone);
-            string name = go.name.Replace("(Clone)", "");
-            if (m_cacheList.ContainsKey(name))
+            //go 名字一般为xx(Clone);
+            var data = go.GetComponent<PrefabData>();
+            if (data == null)
             {
-                m_cacheList[name].Add(go);
+                Debug.LogError("can't collect obj, missing PrefabData component" + go.name);
+            }
+
+            string key = data.pathName;
+            if (m_cacheList.ContainsKey(key))
+            {
+                if (m_cacheList[key].Contains(go))
+                {
+                    Debug.LogError("collect repeat" + go.name);
+                }
+                else
+                {
+                    m_cacheList[key].Add(go);
+                }
             }
             else
             {
-                m_cacheList.Add(name, new List<GameObject>());
-                m_cacheList[name].Add(go);
+                m_cacheList.Add(key, new List<GameObject>());
+                m_cacheList[key].Add(go);
             }
+
+            //重设父节点 防止被删除
+            go.transform.SetParent(null);
             go.SetActive(false);
         }
 

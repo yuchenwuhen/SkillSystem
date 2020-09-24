@@ -18,6 +18,7 @@ namespace VFramework.Common
             Lowest = 400,
         }
 
+        public delegate void EventFunc();
         public delegate void EventFunction(string ge);
         public delegate void EventFunction<U>(string ge, U arg1);
         public delegate void EventFunction<U, V>(string ge, U arg1, V arg2);
@@ -93,6 +94,11 @@ namespace VFramework.Common
 
         // removeOnLoadScene决定此监听注册是否在加载场景时自动移除，大部分监听都应该选择自动移除，这是防止内存泄漏的保障机制
         public void AddListener(string ge, EventFunction ef, bool removeOnLoadScene = true, EventPriority priority = EventPriority.Medium)
+        {
+            AddListenerInternal(ge, ef, removeOnLoadScene, priority);
+        }
+
+        public void AddListener(string ge, EventFunc ef, bool removeOnLoadScene = true, EventPriority priority = EventPriority.Medium)
         {
             AddListenerInternal(ge, ef, removeOnLoadScene, priority);
         }
@@ -282,8 +288,15 @@ namespace VFramework.Common
             foreach (EventNode node in tpList)
             {
                 EventFunction ef = node.function as EventFunction;
+                EventFunc ef1 = node.function as EventFunc;
                 if (ef != null)
+                {
                     ef(ge);
+                }
+                else if (ef1 != null)
+                {
+                    ef1();
+                }
                 else
                     Debug.LogError(string.Format("处理事件 \"{0}\" 时回调函数参数不匹配", ge));
             }

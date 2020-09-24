@@ -22,14 +22,14 @@ public class ProjectAssetsChangeEvent
     private static void OnProjectWindowChanged()
     {
         //Debug.Log("OnProjectWindowChanged");
-        UpdateAsset(null);
+        //UpdateAsset(null);
     }
 
     private static void OnCreateAssetCallBack(string t)
     {
         List<string> paths = new List<string>();
         paths.Add(t);
-        UpdateAsset(paths);
+        //UpdateAsset(paths);
         //Debug.Log("OnCreateAssetCallBack");
     }
 
@@ -37,7 +37,7 @@ public class ProjectAssetsChangeEvent
     {
         List<string> paths = new List<string>();
         paths.AddRange(t);
-        UpdateAsset(paths);
+        //UpdateAsset(paths);
         //Debug.Log("OnSaveAssetsCallBack");
     }
 
@@ -46,7 +46,7 @@ public class ProjectAssetsChangeEvent
         List<string> paths = new List<string>();
         paths.Add(t1);
         paths.Add(t2);
-        UpdateAsset(paths);
+        //UpdateAsset(paths);
         //Debug.Log("OnMoveAssetCallBack");
     }
 
@@ -54,26 +54,26 @@ public class ProjectAssetsChangeEvent
     {
         List<string> paths = new List<string>();
         paths.Add(t1);
-        UpdateAsset(paths);
+        //UpdateAsset(paths);
         //Debug.Log("OnDeleteAssetCallBack");
     }
 
     private static void UpdateAsset(List<string> paths)
     {
         bool isUpdate = false;
-        if (paths == null)
-            isUpdate = true;
-        else
-        {
-            foreach (var item in paths)
-            {
-                if (item.Contains("Assets/Resources"))
-                {
-                    isUpdate = true;
-                    break;
-                }
-            }
-        }
+        //if (paths == null)
+        //    isUpdate = true;
+        //else
+        //{
+        //    foreach (var item in paths)
+        //    {
+        //        if (item.Contains("Assets/Resources"))
+        //        {
+        //            isUpdate = true;
+        //            break;
+        //        }
+        //    }
+        //}
         if (isUpdate)
         {
             if (ResourcesConfigManager.GetIsExistResources())
