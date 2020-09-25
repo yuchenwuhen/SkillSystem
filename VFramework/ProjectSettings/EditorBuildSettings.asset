@@ -6,8 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 27046b0066d2b7647bcbb2eac6c0167f
+    path: Assets/Scenes/Launcher.unity
+    guid: 7b2f9e4a06ada554a93bc25c96fc0f6c
+  - enabled: 1
+    path: Assets/Scenes/3D.unity
+    guid: f3f8c2e3a394675418ce9dc8490c3bca
+  - enabled: 0
+    path: Assets/Photon/PhotonUnityNetworking/Demos/DemoAsteroids/Scenes/DemoAsteroids-LobbyScene.unity
+    guid: c8a9d1312a49dc8488a9b32d83d659c7
+  - enabled: 0
+    path: Assets/Photon/PhotonUnityNetworking/Demos/DemoAsteroids/Scenes/DemoAsteroids-GameScene.unity
+    guid: 98efc37d6307844488eb3e4247dde7e9
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: b542c4eae104c2f4cac387bad0db8ff9,
       type: 2}

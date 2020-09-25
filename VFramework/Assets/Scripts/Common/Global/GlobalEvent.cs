@@ -17,6 +17,21 @@ public class GlobalEvent
     /// </summary>
     public const string CreateRoomSuccess = "CreateRoomSuccess";
 
+    /// <summary>
+    /// 玩家进入房间
+    /// </summary>
+    public const string OnPlayerEnteredRoom = "OnPlayerEnteredRoom";
+
+    /// <summary>
+    /// 离开房间
+    /// </summary>
+    public const string OnLeftRoom = "OnLeftRoom";
+
+    /// <summary>
+    /// 房间列表更新
+    /// </summary>
+    public const string OnRoomListUpdate = "OnRoomListUpdate";
+
     public const string ReadyUpdate = "ReadyUpdate";
 
     /// <summary>

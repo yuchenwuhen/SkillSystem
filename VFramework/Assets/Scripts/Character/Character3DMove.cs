@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VFramework.Common;
@@ -13,15 +14,12 @@ namespace VFramework.Character
     public class Character3DMove : CharacterMoveBase
     {
         [Header("Movement")]
-        private Rigidbody m_rigidbody;
 
-        public Vector3 Velocity
-        {
-            get { return m_rigidbody.velocity; }
-            set { m_rigidbody.velocity = value; }
-        }
+        private PhotonView m_photonView;
 
         private Character3DInput m_character3DInput;
+
+        private Transform m_camera;
 
         private Vector3 m_moveDirection;
         public Vector3 MoveDirection
@@ -36,7 +34,8 @@ namespace VFramework.Character
             }
         }
 
-        private float m_groundFriction = 0;
+        [SerializeField]
+        private float m_groundFriction = 8;
         private float GroundFriction
         {
             get
@@ -124,19 +123,6 @@ namespace VFramework.Character
         [SerializeField]
         private float m_maxFallSpeed = 10f;
 
-        [Tooltip("角色是否会从陡峭的斜坡滑下")]
-        [SerializeField]
-        private bool m_slideOnSteepSlope = true;
-
-        [Tooltip("斜坡滑下来角度")]
-        [SerializeField]
-        private float m_slopLimit;
-        public float SlopeLimit
-        {
-            get { return m_slopLimit; }
-            set { m_slopLimit = Mathf.Clamp(value, 0.0f, 89.0f); }
-        }
-
         private float m_referenceCastDistance;
 
         /// <summary>
@@ -218,8 +204,6 @@ namespace VFramework.Character
         private bool m_isPause = false;
 
         [Header("Jump Paramter")]
-        [SerializeField]
-        private bool m_isForce;
 
         private Vector3 m_normal;
 
@@ -279,14 +263,24 @@ namespace VFramework.Character
         protected override void Init()
         {
             base.Init();
-            m_rigidbody = this.GetComponent<Rigidbody>();
             m_character3DInput = this.GetComponent<Character3DInput>();
             m_groundDetection = this.GetComponent<GroundDetection>();
             m_characterMovement = this.GetComponent<CharacterMovement>();
+            m_photonView = this.GetComponent<PhotonView>();
+
+            if (Camera.main != null)
+            {
+                m_camera = Camera.main.transform;
+            }
         }
 
         protected override void FixedUpdate()
         {
+            if (PhotonNetwork.IsConnected && !m_photonView.IsMine)
+            {
+                return;
+            }
+
             base.FixedUpdate();
 
             UpdateMove();
@@ -294,6 +288,11 @@ namespace VFramework.Character
 
         protected override void Update()
         {
+            if (PhotonNetwork.IsConnected && !m_photonView.IsMine)
+            {
+                return;
+            }
+
             base.Update();
 
             HandleInput();
@@ -306,15 +305,21 @@ namespace VFramework.Character
             UpdateRotation();
         }
 
+        private Vector3 m_camForward;
 
         void HandleInput()
         {
-            MoveDirection = new Vector3
-            (
-                m_character3DInput.PlayerActions.Move3D.X,
-                0,
-                -m_character3DInput.PlayerActions.Move3D.Y
-            );
+            if (m_camera != null)
+            {
+                // calculate camera relative direction to move:
+                m_camForward = Vector3.Scale(m_camera.forward, new Vector3(1, 0, 1)).normalized;
+                MoveDirection = -m_character3DInput.PlayerActions.Move3D.Y * m_camForward + m_character3DInput.PlayerActions.Move3D.X * m_camera.right;
+            }
+            else
+            {
+                // we use world-relative directions in the case of no main camera
+                MoveDirection = -m_character3DInput.PlayerActions.Move3D.Y * Vector3.forward + m_character3DInput.PlayerActions.Move3D.X * Vector3.right;
+            }
 
             IsJump = m_character3DInput.PlayerActions.Jump.WasPressed;
         }
@@ -472,7 +477,7 @@ namespace VFramework.Character
 
         void UpdateRotation()
         {
-            m_characterMovement.Rotate(m_moveDirection, m_turnSpeed);
+            m_characterMovement.Rotate(m_moveDirection.normalized, m_turnSpeed);
         }
     }
 }

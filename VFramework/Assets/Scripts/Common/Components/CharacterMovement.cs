@@ -791,6 +791,8 @@ namespace VFramework.Character
                 return;
 
             var targetRotation = Quaternion.LookRotation(direction, transform.up);
+
+
             var newRotation = Quaternion.Slerp(cachedRigidbody.rotation, targetRotation,
                 angularSpeed * Mathf.Deg2Rad * Time.deltaTime);
 
@@ -1615,7 +1617,7 @@ namespace VFramework.Character
 
             cachedRigidbody.useGravity = false;
             cachedRigidbody.isKinematic = false;
-            cachedRigidbody.freezeRotation = true;
+            //cachedRigidbody.freezeRotation = true;
 
             // Attempt to validate frictionless material
 

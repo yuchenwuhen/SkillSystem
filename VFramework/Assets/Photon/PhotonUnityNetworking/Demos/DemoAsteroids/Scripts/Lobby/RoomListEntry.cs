@@ -24,6 +24,11 @@ namespace Photon.Pun.Demo.Asteroids
             });
         }
 
+        private void OnDestroy()
+        {
+            JoinRoomButton.onClick.RemoveAllListeners();
+        }
+
         public void Initialize(string name, byte currentPlayers, byte maxPlayers)
         {
             roomName = name;
