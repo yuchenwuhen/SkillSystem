@@ -28,6 +28,7 @@
         public PlayerTwoAxisAction Move3D;
 
         public PlayerAction Jump;
+        public PlayerAction Attack;
 
 
         public PlayerActions()
@@ -54,6 +55,7 @@
             Move3D = CreateTwoAxisPlayerAction(Left3D, Right3D, Front3D, Back3D);
 
             Jump =  CreatePlayerAction("Jump");
+            Attack =  CreatePlayerAction("Attack");
         }
 
 
@@ -109,6 +111,9 @@
 
             playerActions.Jump.AddDefaultBinding(Key.Space);
             playerActions.Jump.AddDefaultBinding(InputControlType.Action1);
+
+            playerActions.Attack.AddDefaultBinding(Mouse.LeftButton);
+
 
             playerActions.ListenOptions.IncludeUnknownControllers = true;
 			playerActions.ListenOptions.MaxAllowedBindings = 4;
